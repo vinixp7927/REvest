@@ -1,0 +1,243 @@
+/* Coletor Page Styles */
+
+/* Estilos para tabs */
+.tabs-container {
+    margin-bottom: 30px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    color: #28a745;
+}
+
+.tab-btn.active {
+    color: #28a745;
+    border-bottom-color: #28a745;
+}
+
+/* Tab content */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Coletas list */
+.coletas-list {
+    display: grid;
+    gap: 20px;
+}
+
+.coleta-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.coleta-card:hover {
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+    border-color: #28a745;
+}
+
+.coleta-card-finalizada {
+    opacity: 0.85;
+    background: #f9fefb;
+    border-left: 4px solid #28a745;
+}
+
+.coleta-card-finalizada:hover {
+    opacity: 1;
+}
+
+/* Header */
+.coleta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.coleta-id {
+    font-weight: 700;
+    color: #333;
+    font-size: 16px;
+}
+
+.coleta-date {
+    color: #999;
+    font-size: 14px;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-aprovada {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-coletada {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Details */
+.coleta-details {
+    margin-bottom: 15px;
+}
+
+.coleta-details p {
+    margin: 8px 0;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.coleta-details strong {
+    color: #333;
+}
+
+/* Items */
+.coleta-items {
+    margin-top: 15px;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.coleta-items h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.coleta-items ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: none;
+}
+
+.coleta-items li {
+    padding: 6px 0;
+    color: #555;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    line-height: 1.4;
+}
+
+.coleta-items li:last-child {
+    border-bottom: none;
+}
+
+.coleta-items li:before {
+    content: "✓ ";
+    color: #28a745;
+    font-weight: bold;
+    margin-right: 6px;
+}
+
+/* Actions */
+.coleta-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    border-left: 4px solid;
+    margin-bottom: 20px;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #0c5460;
+    color: #0c5460;
+}
+
+.alert p {
+    margin: 0;
+    font-size: 14px;
+}

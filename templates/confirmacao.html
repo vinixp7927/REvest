@@ -1,0 +1,67 @@
+    <link rel="stylesheet" href="/static/css/confirmacao.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/confirmacao.css') }}">
+{% endblock %}
+
+{% block title %}Confirmação de Doação{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/dashboard"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="/doacao"><i class="fas fa-tshirt"></i> Fazer Doação</a></li>
+                    <li><a href="/historico"><i class="fas fa-history"></i> Histórico</a></li>
+                    
+                    <li><a href="/ticket"><i class="fas fa-headset"></i> Suporte</a></li>
+                    {% if session.role == 'admin' %}
+                    <li><a href="/admin"><i class="fas fa-cog"></i> Administração</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="confirmation-card">
+                    <div class="confirmation-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2>Doação Solicitada com Sucesso!</h2>
+                    <p class="confirmation-message">Obrigado, {{ session.name|capitalize }}! Sua doação foi registrada.</p>
+
+                    <div class="confirmacao-detalhes">
+                        <h3>Detalhes da Doação</h3>
+
+                        <ul>
+                            {% if doacao.itens.items is defined %}
+                                {% for item, qtd in doacao.itens.items() %}
+                                    <li><strong>{{ item|capitalize }}:</strong> {{ qtd }}</li>
+                                {% endfor %}
+                            {% else %}
+                                {% for it in doacao.itens %}
+                                    <li><strong>{{ it.Tipo|capitalize }}{% if it.Categoria %} - {{ it.Categoria }}{% endif %}:</strong> {{ it.Quantidade }}{% if it.Tamanho %} (Tamanho: {{ it.Tamanho }}){% endif %}</li>
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+
+                        <p><strong>Data da coleta:</strong> {{ doacao.data }}</p>
+                        <p><strong>Endereço para coleta:</strong> {{ doacao.endereco }}</p>
+                        <p><strong>Status:</strong> {{ doacao.status }}</p>
+                    </div>
+
+                    <div class="actions">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Voltar ao Início</a>
+                        <a href="{{ url_for('historico') }}" class="btn btn-outline">Ver Histórico</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

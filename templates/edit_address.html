@@ -1,0 +1,92 @@
+    <link rel="stylesheet" href="/static/css/edit_address.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/edit_address.css') }}">
+{% endblock %}
+
+{% block title %}Editar Endereço{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/dashboard"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="/doacao"><i class="fas fa-tshirt"></i> Fazer Doação</a></li>
+                    <li><a href="/historico"><i class="fas fa-history"></i> Histórico</a></li>
+                    
+                    <li><a href="/ticket"><i class="fas fa-headset"></i> Suporte</a></li>
+                    {% if session.role == 'admin' %}
+                    <li><a href="/admin"><i class="fas fa-cog"></i> Administração</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title">Editar Endereço</h2>
+                </div>
+                
+                <form method="POST" style="max-width: 600px;">
+                    <div class="form-group">
+                        <label for="type">Tipo:</label>
+                        <input type="text" class="form-control" name="type" value="{{ address.type }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="street">Rua:</label>
+                        <input type="text" class="form-control" name="street" value="{{ address.street }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="number">Número:</label>
+                        <input type="text" class="form-control" name="number" value="{{ address.number }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cep">CEP:</label>
+                        <input type="text" class="form-control" name="cep" value="{{ address.cep }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="neighborhood">Bairro:</label>
+                        <input type="text" class="form-control" name="neighborhood" value="{{ address.neighborhood }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">Cidade:</label>
+                        <input type="text" class="form-control" name="city" value="{{ address.city }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">Estado:</label>
+                        <input type="text" class="form-control" name="state" value="{{ address.state }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="complement">Complemento:</label>
+                        <input type="text" class="form-control" name="complement" value="{{ address.complement }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="default" {% if address.is_default %}checked{% endif %}>
+                            Definir como principal
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        <a href="{{ url_for('conta') }}" class="btn btn-outline">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

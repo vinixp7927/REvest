@@ -1,0 +1,273 @@
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/moderacao.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_solicitacoes_exclusao.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar do Admin -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/admin"><i class="fas fa-tachometer-alt"></i> Painel</a></li>
+                    <li><a href="/moderacao"><i class="fas fa-gavel"></i> Moderação</a></li>
+                    <li><a href="/admin/solicitacoes_exclusao" class="active"><i class="fas fa-trash-alt"></i> Solicitações de Exclusão</a></li>
+                    
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title"><i class="fas fa-trash-alt"></i> Solicitações de Exclusão de Histórico</h2>
+                </div>
+
+                <!-- Solicitações Pendentes -->
+                <div class="section-container">
+                    <div class="section-header">
+                        <h3>Solicitações Pendentes</h3>
+                        <span class="badge badge-warning">{{ solicitacoes_pendentes|length }}</span>
+                    </div>
+
+                    {% if solicitacoes_pendentes %}
+                    <div class="requests-list">
+                        {% for solicitacao in solicitacoes_pendentes %}
+                        <div class="request-card request-card-pending">
+                            <div class="request-header">
+                                <div class="request-info">
+                                    <h4 class="request-title">
+                                        <i class="fas fa-user"></i>
+                                        {{ solicitacao.doador.Nome }}
+                                        <span class="request-type">{{ solicitacao.Tipo|capitalize }}</span>
+                                    </h4>
+                                    <p class="request-email">{{ solicitacao.doador.Email }}</p>
+                                    <p class="request-date">
+                                        <i class="fas fa-calendar"></i>
+                                        Solicitado em: {{ solicitacao.Data_Solicitacao.strftime('%d/%m/%Y %H:%M') }}
+                                    </p>
+                                </div>
+                                <div class="request-status">
+                                    <span class="status-badge status-pending">Pendente</span>
+                                </div>
+                            </div>
+
+                            <div class="request-actions">
+                                <button class="btn btn-success btn-approve" data-request-id="{{ solicitacao.ID_Solicitacao }}">
+                                    <i class="fas fa-check"></i> Aprovar
+                                </button>
+                                <button class="btn btn-danger btn-reject" data-request-id="{{ solicitacao.ID_Solicitacao }}">
+                                    <i class="fas fa-times"></i> Rejeitar
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Nenhuma solicitação pendente no momento.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Solicitações Respondidas -->
+                <div class="section-container" style="margin-top: 40px;">
+                    <div class="section-header">
+                        <h3>Histórico de Respostas</h3>
+                        <span class="badge badge-secondary">{{ solicitacoes_respondidas|length }}</span>
+                    </div>
+
+                    {% if solicitacoes_respondidas %}
+                    <div class="requests-list">
+                        {% for solicitacao in solicitacoes_respondidas %}
+                        <div class="request-card request-card-{{ solicitacao.Status }}">
+                            <div class="request-header">
+                                <div class="request-info">
+                                    <h4 class="request-title">
+                                        <i class="fas fa-user"></i>
+                                        {{ solicitacao.doador.Nome }}
+                                        <span class="request-type">{{ solicitacao.Tipo|capitalize }}</span>
+                                    </h4>
+                                    <p class="request-email">{{ solicitacao.doador.Email }}</p>
+                                    <p class="request-date">
+                                        <i class="fas fa-calendar"></i>
+                                        Respondida em: {{ solicitacao.Data_Resposta.strftime('%d/%m/%Y %H:%M') }}
+                                    </p>
+                                    {% if solicitacao.Motivo %}
+                                    <p class="request-reason">
+                                        <i class="fas fa-comment"></i>
+                                        <strong>Motivo:</strong> {{ solicitacao.Motivo }}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                                <div class="request-status">
+                                    <span class="status-badge status-{{ solicitacao.Status }}">
+                                        {{ 'Aprovada' if solicitacao.Status == 'aprovada' else 'Rejeitada' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Nenhuma solicitação respondida ainda.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal para rejeição com motivo -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Rejeitar Solicitação</h2>
+            <button type="button" class="modal-close" onclick="closeRejectModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="rejectForm">
+                <div class="form-group">
+                    <label for="motivo">Motivo da Rejeição:</label>
+                    <textarea id="motivo" name="motivo" rows="4" placeholder="Explique por que a solicitação foi rejeitada..." required></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Cancelar</button>
+            <button type="button" class="btn btn-danger" onclick="confirmReject()">Rejeitar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para aprovação -->
+<div id="approveModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Confirmar Aprovação</h2>
+            <button type="button" class="modal-close" onclick="closeApproveModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Tem certeza que deseja aprovar essa solicitação de exclusão?</p>
+            <p><strong>⚠️ Atenção:</strong> O histórico do usuário será deletado permanentemente.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeApproveModal()">Cancelar</button>
+            <button type="button" class="btn btn-success" onclick="confirmApprove()">Sim, Aprovar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentRequestId = null;
+
+    // Event delegation para botões de aprovar
+    document.addEventListener('click', function(event) {
+        if (event.target.closest('.btn-approve')) {
+            const btn = event.target.closest('.btn-approve');
+            currentRequestId = btn.getAttribute('data-request-id');
+            document.getElementById('approveModal').style.display = 'flex';
+        }
+        
+        if (event.target.closest('.btn-reject')) {
+            const btn = event.target.closest('.btn-reject');
+            currentRequestId = btn.getAttribute('data-request-id');
+            document.getElementById('rejectModal').style.display = 'flex';
+        }
+    });
+
+    function closeApproveModal() {
+        document.getElementById('approveModal').style.display = 'none';
+        currentRequestId = null;
+    }
+
+    function confirmApprove() {
+        if (!currentRequestId) return;
+
+        fetch(`/admin/responder_exclusao/${currentRequestId}/aprovar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ Solicitação aprovada e histórico deletado!');
+                location.reload();
+            } else {
+                alert('❌ Erro: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao processar solicitação');
+        });
+
+        closeApproveModal();
+    }
+
+    function closeRejectModal() {
+        document.getElementById('rejectModal').style.display = 'none';
+        document.getElementById('rejectForm').reset();
+        currentRequestId = null;
+    }
+
+    function confirmReject() {
+        if (!currentRequestId) return;
+
+        const motivo = document.getElementById('motivo').value.trim();
+        if (!motivo) {
+            alert('Por favor, preencha o motivo da rejeição');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('motivo', motivo);
+
+        fetch(`/admin/responder_exclusao/${currentRequestId}/rejeitar`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ Solicitação rejeitada!');
+                location.reload();
+            } else {
+                alert('❌ Erro: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao processar solicitação');
+        });
+
+        closeRejectModal();
+    }
+
+    // Fechar modal ao clicar fora
+    window.addEventListener('click', function(event) {
+        const approveModal = document.getElementById('approveModal');
+        const rejectModal = document.getElementById('rejectModal');
+        
+        if (event.target === approveModal) {
+            closeApproveModal();
+        }
+        if (event.target === rejectModal) {
+            closeRejectModal();
+        }
+    });
+
+    // Botões do modal
+    document.querySelector('#approveModal .modal-close')?.addEventListener('click', closeApproveModal);
+    document.querySelector('#rejectModal .modal-close')?.addEventListener('click', closeRejectModal);
+</script>
+{% endblock %}

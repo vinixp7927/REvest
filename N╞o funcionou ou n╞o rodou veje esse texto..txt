@@ -1,0 +1,12 @@
+no cmd como administrador use esse comando abaixo:
+
+                  (    pip install flask-sqlalchemy    )
+
+
+
+
+para instalar o flask use esse:
+
+                 (   python -m pip install ou pip install flask  )
+
+

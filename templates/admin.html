@@ -1,0 +1,101 @@
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/base_dashboard.css">
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/dashboard"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="/doacao"><i class="fas fa-tshirt"></i> Fazer Doação</a></li>
+                    <li><a href="/historico"><i class="fas fa-history"></i> Histórico</a></li>
+                    
+                    <li><a href="/admin" class="active"><i class="fas fa-cog"></i> Administração</a></li>
+                    <li><a href="/moderacao"><i class="fas fa-shield-alt"></i> Moderação</a></li>
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title">Painel Administrativo</h2>
+                </div>
+                
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ total }}</div>
+                        <div class="stat-title">Doações Totais</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ pendentes }}</div>
+                        <div class="stat-title">Pendentes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ aprovadas }}</div>
+                        <div class="stat-title">Aprovadas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ coletadas }}</div>
+                        <div class="stat-title">Coletadas</div>
+                    </div>
+                </div>
+                
+                <h3>Solicitações Pendentes</h3>
+                {% if donations %}
+                <div class="donation-list">
+                    {% for donation in donations %}
+                    <div class="donation-card">
+                        <div class="donation-header">
+                            <span class="donation-id">#REV{{ donation.id }}</span>
+                            <span class="donation-date">{{ donation.data }}</span>
+                            <span class="status-badge status-pending">{{ donation.status|capitalize }}</span>
+                        </div>
+                        
+                        <div class="donation-details">
+                            <p><strong>Doador:</strong> {{ donation.name }}</p>
+                            <p><strong>CEP:</strong> {{ donation.cep }}</p>
+                            <p><strong>Endereço:</strong> {{ donation.endereco }}</p>
+                            
+                            <div class="donation-items">
+                                <h4>Itens Doados:</h4>
+                                <ul>
+                                    {% if donation.itens.items is defined %}
+                                        {% for item, quantity in donation.itens.items() %}
+                                            {% if quantity|int > 0 %}
+                                                <li>{{ quantity }}x {{ item|capitalize }}</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for it in donation.itens %}
+                                            <li>{{ it.Quantidade }}x {{ it.Tipo|capitalize }}{% if it.Tamanho %} - Tamanho: {{ it.Tamanho }}{% endif %}{% if it.Categoria %} - {{ it.Categoria }}{% endif %}</li>
+                                        {% endfor %}
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="donation-actions">
+                            <a href="{{ url_for('approve_donation', donation_id=donation.id) }}" class="btn btn-success">Aprovar Doação</a>
+                            <a href="{{ url_for('cancel_donation', donation_id=donation.id) }}" class="btn btn-danger">Cancelar Doação</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <p>Nenhuma doação pendente no momento.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

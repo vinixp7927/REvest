@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}REvest{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css)  }}">
+
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/static/favicon.ico">
+
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar" style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 30px;">
+                    <div class="logo-container">
+                        <a class="logo" href="/">
+                            <img src="/static/img/logo.png" alt="REvest Logo" style="height: 40px;">
+                        </a>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="/">Início</a></li>
+                        <li><a href="#">Como Doar</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="auth-buttons" style="display: flex; align-items: center; justify-content: flex-end; height: 70px;">
+                    {% if session.user %}
+                        <div class="account-menu-container">
+                            <div class="account-menu-trigger" id="accountMenuTrigger">
+                                <span class="account-icon">
+                                    <i class="fa fa-user" style="font-size: 22px;"></i>
+                                </span>
+                                <span class="account-name">{{ session.user[:8] }}{% if session.user|length > 8 %}...{% endif %}</span>
+                            </div>
+                            <div class="account-menu" id="accountMenu" style="display:none;">
+                                <ul>
+                                    <li style="font-weight:600;color:var(--primary);padding-bottom:4px;">Detalhes da Conta</li>
+                                    <li>
+                                        <a href="#" id="editAccountBtn" style="color:var(--primary);font-size:13px;">Editar Conta</a>
+                                        <div id="editAccountForm" style="display:none; margin-top:10px;">
+                                            <form method="POST" action="/conta/editar" style="display:flex;flex-direction:column;gap:8px;">
+                                                <label for="editNome" style="font-size:13px;">Nome:</label>
+                                                <input type="text" id="editNome" name="nome" value="{{ session.name }}" required style="padding:4px;">
+                                                <label for="editCPF" style="font-size:13px;">CPF:</label>
+                                                <input type="text" id="editCPF" name="cpf" value="{{ session.cpf }}" required style="padding:4px;">
+                                                <label for="editCEP" style="font-size:13px;">CEP:</label>
+                                                <input type="text" id="editCEP" name="cep" value="{{ session.cep }}" required style="padding:4px;">
+                                                <button type="submit" style="background:var(--primary);color:#fff;border:none;padding:6px 12px;border-radius:4px;">Salvar Alterações</button>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    <li><a href="/conta/senha">Mudar Senha</a></li>
+                                    <li style="font-size:13px;color:var(--gray);padding-bottom:8px;">
+                                        ID: {{ session.user_id }}<br>
+                                        CPF: {{ session.cpf if session.cpf else '---' }}<br>
+                                        Endereço: {{ session.endereco if session.endereco else '---' }}<br>
+                                        CEP: {{ session.cep if session.cep else '---' }}
+                                    </li>
+                                    <li><a href="/enderecos">Endereços</a></li>
+                                    <li>
+                                        <a href="#" id="editAddressBtn" style="color:var(--primary);font-size:13px;">Editar Endereço Principal</a>
+                                        <div id="editAddressForm" style="display:none; margin-top:10px;">
+                                            <form method="POST" action="/conta/endereco" style="display:flex;flex-direction:column;gap:8px;">
+                                                <label for="rua" style="font-size:13px;">Rua:</label>
+                                                <input type="text" id="rua" name="rua" value="" required style="padding:4px;">
+                                                <label for="numero" style="font-size:13px;">Número:</label>
+                                                <input type="text" id="numero" name="numero" value="" required style="padding:4px;">
+                                                <label for="bairro" style="font-size:13px;">Bairro:</label>
+                                                <input type="text" id="bairro" name="bairro" value="" required style="padding:4px;">
+                                                <label for="cidade" style="font-size:13px;">Cidade:</label>
+                                                <input type="text" id="cidade" name="cidade" value="" required style="padding:4px;">
+                                                <label for="estado" style="font-size:13px;">Estado:</label>
+                                                <input type="text" id="estado" name="estado" value="" required style="padding:4px;">
+                                                <label for="cep" style="font-size:13px;">CEP:</label>
+                                                <input type="text" id="cep" name="cep" value="" required style="padding:4px;">
+                                                <button type="submit" style="background:var(--primary);color:#fff;border:none;padding:6px 12px;border-radius:4px;">Salvar Endereço</button>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    <li><a href="/conta/suporte">Suporte</a></li>
+                                    <li>
+                                        <a href="#" id="supportBtn" style="color:var(--primary);font-size:13px;">Suporte</a>
+                                        <div id="supportForm" style="display:none; margin-top:10px;">
+                                            <form method="POST" action="/conta/suporte" style="display:flex;flex-direction:column;gap:8px;">
+                                                <label for="supportMsg" style="font-size:13px;">Mensagem para o suporte:</label>
+                                                <textarea id="supportMsg" name="mensagem" rows="3" required style="padding:4px;"></textarea>
+                                                <button type="submit" style="background:var(--primary);color:#fff;border:none;padding:6px 12px;border-radius:4px;">Enviar Ticket</button>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="#" style="color:var(--danger);" id="deleteAccountBtn">Deletar Conta</a>
+                                        <div id="deleteAccountForm" style="display:none; margin-top:10px;">
+                                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                                {% if messages %}
+                                                    <ul class="flashes" style="list-style:none;padding:0;margin-bottom:8px;">
+                                                    {% for category, message in messages %}
+                                                        {% if category == 'danger' %}
+                                                            <li style="color:var(--danger);font-size:13px;">{{ message }}</li>
+                                                        {% else %}
+                                                            <li style="color:var(--success);font-size:13px;">{{ message }}</li>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            {% endwith %}
+                                            <form method="POST" action="/conta/deletar" style="display:flex;flex-direction:column;gap:8px;">
+                                                <label for="deletePassword" style="font-size:13px;">Senha:</label>
+                                                <input type="password" id="deletePassword" name="password" required style="padding:4px;">
+                                                <label for="deletePasswordConfirm" style="font-size:13px;">Confirme a Senha:</label>
+                                                <input type="password" id="deletePasswordConfirm" name="password_confirm" required style="padding:4px;">
+                                                <button type="submit" style="background:var(--danger);color:#fff;border:none;padding:6px 12px;border-radius:4px;">Confirmar Exclusão</button>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    <li><a href="/logout" style="color:var(--gray);">Sair</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% else %}
+                        <button class="btn btn-outline" id="loginBtn">Fazer Login</button>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <img src="/static/img/logo.png" alt="REvest Logo" style="height: 50px; margin-bottom: 15px;">
+                    <p>Conectando doadores a quem precisa, transformando roupas em esperança.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Início</a></li>
+                        <li><a href="#">Como Doar</a></li>
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Contato</a></li>
+                        <li><a href="#">Termos de Uso</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Nossos Parceiros</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"></a></li>
+                        <li><a href="#"></a></li>
+                        <li><a href="#"></a></li>
+                        <li><a href="#"></a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i> R. Jesuíno de Arruda, 2020, - São carlos</li>
+                        <li><i class="fas fa-phone"></i> (16) 9934-05190</li>
+                        <li><i class="fas fa-envelope"></i> REvest@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 REvest - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var supportBtn = document.getElementById('supportBtn');
+    var supportForm = document.getElementById('supportForm');
+    if(supportBtn && supportForm) {
+        supportBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            supportForm.style.display = supportForm.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var editAddressBtn = document.getElementById('editAddressBtn');
+    var editAddressForm = document.getElementById('editAddressForm');
+    if(editAddressBtn && editAddressForm) {
+        editAddressBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            editAddressForm.style.display = editAddressForm.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var editBtn = document.getElementById('editAccountBtn');
+    var editForm = document.getElementById('editAccountForm');
+    if(editBtn && editForm) {
+        editBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var deleteBtn = document.getElementById('deleteAccountBtn');
+    var deleteForm = document.getElementById('deleteAccountForm');
+    if(deleteBtn && deleteForm) {
+        deleteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            deleteForm.style.display = deleteForm.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+});
+</script>
+
+    <!-- Confirmação opcional para exclusão -->
+    <script>
+        document.querySelectorAll('a[href*="/delete_address"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (!confirm('Tem certeza que deseja excluir este endereço?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+
+<!-- Navegação: proteção contra back/forward e botões laterais do mouse -->
+<script>
+(function () {
+  try {
+    history.pushState({preventBack: true}, document.title, location.href);
+    window.addEventListener('popstate', function (e) {
+      history.pushState({preventBack: true}, document.title, location.href);
+      const el = document.getElementById('__nav_block_toast');
+      if (el) {
+        el.style.display = 'block';
+        clearTimeout(el.__t);
+        el.__t = setTimeout(() => el.style.display = 'none', 1800);
+      }
+    });
+    window.addEventListener('auxclick', function (e) {
+      if (e.button === 3 || e.button === 4) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, {passive: false});
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      if (e.key === 'Backspace') {
+        const el = document.activeElement;
+        const tag = el && el.tagName ? el.tagName.toUpperCase() : '';
+        const editable = el && (el.isContentEditable ||
+                                tag === 'INPUT' || tag === 'TEXTAREA' ||
+                                (el.getAttribute && el.getAttribute('role') === 'textbox'));
+        if (!editable || el.readOnly || el.disabled) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    }, {passive: false});
+    const toast = document.createElement('div');
+    toast.id = '__nav_block_toast';
+    toast.style.cssText = 'display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:8px 12px;border-radius:6px;background:rgba(0,0,0,0.75);color:#fff;font-size:13px;z-index:99999';
+    toast.textContent = 'Navegação por histórico desabilitada nesta página.';
+    document.documentElement.appendChild(toast);
+  } catch (err) {
+    console.error('Nav-protection error:', err);
+  }
+})();
+</script>
+
+</body>
+</html>

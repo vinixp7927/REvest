@@ -1,0 +1,146 @@
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/doacao.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+  <div class="container">
+    <div class="dashboard-grid">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li><a href="/dashboard"><i class="fas fa-home"></i> Início</a></li>
+          <li><a href="/doacao" class="active"><i class="fas fa-tshirt"></i> Fazer Doação</a></li>
+          <li><a href="/historico"><i class="fas fa-history"></i> Histórico</a></li>
+          
+          <li><a href="/ticket"><i class="fas fa-headset"></i> Suporte</a></li>
+          {% if session.role == 'admin' %}
+            <li><a href="/admin"><i class="fas fa-cog"></i> Administração</a></li>
+          {% elif session.role == 'coletor' %}
+            <li><a href="/coletor"><i class="fas fa-truck"></i> Painel do Coletor</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="content-header">
+          <h2 class="content-title">Fazer Doação</h2>
+        </div>
+
+        <!-- Aviso mínimo de itens (inicialmente oculto, mostrado apenas se usuário tentar enviar < required) -->
+        <div id="minItemsAlert" class="alert alert-danger" style="display:none;">
+          <strong>Atenção:</strong> Para solicitar a coleta é necessário adicionar no mínimo <span id="requiredCount">3</span> itens no total.
+        </div>
+
+  <!-- FORM CORRETO -->
+  <form id="donationForm" action="{{ url_for('doacao') }}" method="POST">
+          <input type="hidden" name="form_token" value="{{ form_token }}">
+
+          <div class="donation-grid">
+            <div class="donation-item">
+              <i class="fas fa-tshirt"></i>
+              <h3>Roupas</h3>
+              <p>Camisetas, camisas, vestidos</p>
+              <div class="donation-quantity">
+                <button type="button" class="quantity-btn" data-item="roupas">-</button>
+                <input type="text" class="quantity-input" name="roupas" value="0" readonly>
+                <button type="button" class="quantity-btn" data-item="roupas">+</button>
+              </div>
+            </div>
+
+            <div class="donation-item">
+              <i class="fas fa-socks"></i>
+              <h3>Calças</h3>
+              <p>Jeans, sarja, bermudas, shorts</p>
+              <div class="donation-quantity">
+                <button type="button" class="quantity-btn" data-item="calças">-</button>
+                <input type="text" class="quantity-input" name="calças" value="0" readonly>
+                <button type="button" class="quantity-btn" data-item="calças">+</button>
+              </div>
+            </div>
+
+            <div class="donation-item">
+              <i class="fas fa-vest"></i>
+              <h3>Blusas</h3>
+              <p>Blusas de frio, moletons</p>
+              <div class="donation-quantity">
+                <button type="button" class="quantity-btn" data-item="blusas">-</button>
+                <input type="text" class="quantity-input" name="blusas" value="0" readonly>
+                <button type="button" class="quantity-btn" data-item="blusas">+</button>
+              </div>
+            </div>
+
+            <div class="donation-item">
+              <i class="fas fa-layer-group"></i>
+              <h3>Roupas Íntimas</h3>
+              <p>Cuecas, sutiãs, meias</p>
+              <div class="donation-quantity">
+                <button type="button" class="quantity-btn" data-item="roupas_intimas">-</button>
+                <input type="text" class="quantity-input" name="roupas_intimas" value="0" readonly>
+                <button type="button" class="quantity-btn" data-item="roupas_intimas">+</button>
+              </div>
+            </div>
+
+            <div class="donation-item">
+              <i class="fas fa-shoe-prints"></i>
+              <h3>Tênis</h3>
+              <p>Calçados em geral</p>
+              <div class="donation-quantity">
+                <button type="button" class="quantity-btn" data-item="tênis">-</button>
+                <input type="text" class="quantity-input" name="tênis" value="0" readonly>
+                <button type="button" class="quantity-btn" data-item="tênis">+</button>
+              </div>
+            </div>
+
+            <div class="donation-item">
+              <i class="fas fa-umbrella-beach"></i>
+              <h3>Acessórios</h3>
+              <p>Bolsas, chapéus, cintos</p>
+              <div class="donation-quantity">
+                <button type="button" class="quantity-btn" data-item="acessórios">-</button>
+                <input type="text" class="quantity-input" name="acessórios" value="0" readonly>
+                <button type="button" class="quantity-btn" data-item="acessórios">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Endereço para Coleta</label>
+            <select class="form-control" id="address" name="address" required>
+              <option value="">Selecione um endereço</option>
+              {% if addresses %}
+                {% for address in addresses %}
+                  <option value="{{ address.id }}" {% if address.is_default %}selected{% endif %}>
+                    {{ address.type }} - {{ address.street }}, {{ address.number }} - {{ address.neighborhood }}, {{ address.city }}/{{ address.state }}
+                  </option>
+                {% endfor %}
+              {% else %}
+                <option disabled>Nenhum endereço cadastrado</option>
+              {% endif %}
+            </select>
+
+            {% if not addresses %}
+            <div class="alert alert-info" style="margin-top:10px;">
+              <small>Você precisa cadastrar um endereço antes de fazer uma doação. <a href="/conta/endereco?next=/doacao">Clique aqui para cadastrar</a></small>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="date">Data preferencial para coleta</label>
+            <input type="date" class="form-control" id="date" name="date" required min="{{ min_date }}">
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" {% if not addresses %}disabled{% endif %}>
+            {% if addresses %}Solicitar Coleta{% else %}Cadastre um endereço primeiro{% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+<!-- Inline submission handling removed; centralized in static/js/script.js -->

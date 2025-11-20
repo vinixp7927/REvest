@@ -1,0 +1,218 @@
+    <link rel="stylesheet" href="/static/css/conta.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/conta.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/dashboard"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="/doacao"><i class="fas fa-tshirt"></i> Fazer Doação</a></li>
+                    <li><a href="/historico"><i class="fas fa-history"></i> Histórico</a></li>
+                    <li><a href="/ticket"><i class="fas fa-headset"></i> Suporte</a></li>
+                    {% if session.role == 'admin' %}
+                    <li><a href="/admin"><i class="fas fa-cog"></i> Administração</a></li>
+                    {% elif session.role == 'coletor' %}
+                    <li><a href="/coletor"><i class="fas fa-truck"></i> Painel do Coletor</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- Main Content -->
+                        <div class="main-content">
+                                <!-- Flash messages -->
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                        {% for category, msg in messages %}
+                                            <div class="alert alert-{{ category }}">{{ msg }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+                <div class="content-header">
+                    <h2 class="content-title">Minha Conta</h2>
+                </div>
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h2>{{ session.name }}</h2>
+                        <p>{{ session.user }}</p>
+                    </div>
+                </div>
+                <!-- Formulários dinâmicos -->
+                {% if form_type == 'editar' %}
+                <h3>Editar Conta</h3>
+                <form action="/conta/editar" method="POST" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input id="nome" class="form-control" type="text" name="nome" placeholder="Seu nome" value="{{ session.name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input id="email" class="form-control" type="email" name="email" placeholder="Seu e-mail" value="{{ session.user }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </form>
+                {% elif form_type == 'senha' %}
+                <h3>Mudar Senha</h3>
+                <form action="/conta/senha" method="POST" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="current_password">Senha Atual</label>
+                        <input id="current_password" class="form-control" type="password" name="current_password" placeholder="Senha atual" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">Nova Senha</label>
+                        <input id="new_password" class="form-control" type="password" name="new_password" placeholder="Nova senha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_new_password">Confirmar Nova Senha</label>
+                        <input id="confirm_new_password" class="form-control" type="password" name="confirm_new_password" placeholder="Confirmar nova senha" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Alterar Senha</button>
+                </form>
+                {% elif form_type == 'endereco' %}
+                <h3>Adicionar Novo Endereço</h3>
+                <form action="/conta/endereco" method="POST">
+                    {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+                    <input type="text" name="type" placeholder="Tipo de Endereço" required>
+                    <input type="text" name="cep" placeholder="CEP" required>
+                    <input type="text" name="street" placeholder="Rua" required>
+                    <input type="text" name="number" placeholder="Número" required>
+                    <input type="text" name="neighborhood" placeholder="Bairro" required>
+                    <input type="text" name="city" placeholder="Cidade" required>
+                    <input type="text" name="state" placeholder="Estado" required>
+                    <input type="text" name="complement" placeholder="Complemento">
+                    <label><input type="checkbox" name="default"> Tornar endereço padrão</label>
+                    <button type="submit" class="btn btn-primary">Salvar Endereço</button>
+                </form>
+
+                <div class="enderecos-revisao">
+                    <h4>Endereços Salvos</h4>
+                    <div class="enderecos-grid">
+                        {% for endereco in enderecos %}
+                        <div class="endereco-card">
+                            <div class="endereco-info">
+                                <strong>{{ endereco.Tipo }}</strong><br>
+                                {{ endereco.Rua }}, {{ endereco.Numero }}<br>
+                                {{ endereco.Bairro }}, {{ endereco.Cidade }}/{{ endereco.Estado }}<br>
+                                {{ endereco.Complemento }}<br>
+                                <span class="cep">CEP: {{ endereco.CEP }}</span>
+                                {% if endereco.is_default %}<span class="padrao">[Padrão]</span>{% endif %}
+                            </div>
+                            <form action="{{ url_for('delete_address', address_id=endereco.ID_Endereco) }}" method="get" class="endereco-actions">
+                                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="endereco-card vazio">Nenhum endereço cadastrado.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% elif form_type == 'suporte' %}
+                <h3>Suporte</h3>
+                <form action="/conta/suporte" method="POST">
+                    <div class="form-group">
+                        <label for="mensagem">Mensagem</label>
+                        <textarea id="mensagem" name="mensagem" class="form-control" placeholder="Descreva seu problema" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                </form>
+                                {% elif form_type == 'deletar' %}
+                                <h3>Excluir Conta</h3>
+                                <p class="text-muted">A exclusão de conta remove permanentemente seus dados, endereços, tickets e histórico de doações. Esta ação é irreversível.</p>
+                                <form id="deleteAccountForm" action="/conta/deletar" method="POST" class="form-vertical">
+                                        <div class="form-group">
+                                                <label for="password">Digite sua senha</label>
+                                                <input id="password" type="password" name="password" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="password_confirm">Confirme sua senha</label>
+                                                <input id="password_confirm" type="password" name="password_confirm" class="form-control" required>
+                                        </div>
+                                        <button id="startDeleteBtn" type="button" class="btn btn-danger">Iniciar Exclusão</button>
+                                        <!-- final confirmation modal (hidden) -->
+                                        <div id="deleteConfirmBox" style="display:none;margin-top:12px;padding:12px;border:1px solid #f5c6cb;background:#fff0f0;border-radius:6px;">
+                                                <p><strong>Atenção:</strong> Todos os seus dados, doações e tickets serão permanentemente excluídos e você não poderá recorrer.</p>
+                                                <p>Digite sua senha novamente e aguarde o tempo de segurança para habilitar a confirmação.</p>
+                                                <div class="form-group">
+                                                        <label for="password_final">Senha (final)</label>
+                                                        <input id="password_final" type="password" name="password" class="form-control" required>
+                                                </div>
+                                                <div style="margin:8px 0;">Aguarde <span id="deleteTimer">20</span> segundos</div>
+                                                <label style="display:block;margin-top:8px;"><input id="confirmCheckbox" type="checkbox" name="confirm" disabled> Eu concordo que desejo excluir minha conta</label>
+                                                <div style="margin-top:8px;">
+                                                        <button id="finalDeleteBtn" type="submit" class="btn btn-danger" disabled>Excluir Conta Definitivamente</button>
+                                                </div>
+                                        </div>
+                                </form>
+                                <script>
+                                (function(){
+                                    const startBtn = document.getElementById('startDeleteBtn');
+                                    const box = document.getElementById('deleteConfirmBox');
+                                    const timerEl = document.getElementById('deleteTimer');
+                                    const checkbox = document.getElementById('confirmCheckbox');
+                                    const finalBtn = document.getElementById('finalDeleteBtn');
+                                    const passFinal = document.getElementById('password_final');
+
+                                    let countdown = 20;
+                                    let interval = null;
+
+                                    startBtn.addEventListener('click', function(){
+                                        // basic validation before showing
+                                        const p1 = document.getElementById('password').value;
+                                        const p2 = document.getElementById('password_confirm').value;
+                                        if(!p1 || !p2){ alert('Preencha as senhas antes de prosseguir.'); return; }
+                                        if(p1 !== p2){ alert('As senhas iniciais não conferem.'); return; }
+                                        box.style.display = 'block';
+                                        passFinal.focus();
+                                        countdown = 20;
+                                        timerEl.textContent = countdown;
+                                        checkbox.checked = false;
+                                        checkbox.disabled = true;
+                                        finalBtn.disabled = true;
+                                        clearInterval(interval);
+                                        interval = setInterval(function(){
+                                            countdown -= 1;
+                                            timerEl.textContent = countdown;
+                                            if(countdown <= 0){
+                                                clearInterval(interval);
+                                                checkbox.disabled = false;
+                                            }
+                                        }, 1000);
+                                    });
+
+                                    checkbox.addEventListener('change', function(){
+                                        // enable final button only if checked and final password matches original
+                                        if(checkbox.checked){
+                                            // copy final password into hidden original password field so server receives it
+                                            const orig = document.getElementById('password');
+                                            if(passFinal.value && passFinal.value === orig.value){
+                                                finalBtn.disabled = false;
+                                            } else {
+                                                alert('A senha final não confere com a senha digitada anteriormente.');
+                                                checkbox.checked = false;
+                                            }
+                                        } else {
+                                            finalBtn.disabled = true;
+                                        }
+                                    });
+                                })();
+                                </script>
+                {% else %}
+                <h3>Bem-vindo à sua conta!</h3>
+                <p>Selecione uma opção no menu de conta.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

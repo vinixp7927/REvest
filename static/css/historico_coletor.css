@@ -1,0 +1,46 @@
+/* Histórico Coletor Page Styles */
+
+.status-coletada {
+    background-color: #28a745;
+    color: white;
+}
+
+.coleta-card-finalizada {
+    opacity: 0.85;
+    border-left: 4px solid #28a745;
+}
+
+.history-management-section {
+    margin-top: 40px;
+    padding: 30px;
+    background: #f9fefb;
+    border-radius: 10px;
+    border-left: 4px solid #28a745;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    color: #28a745;
+}
+
+.management-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.management-card p {
+    margin-bottom: 15px;
+    color: #555;
+}

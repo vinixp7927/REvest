@@ -1,0 +1,47 @@
+fique a vontade para mexer no código porem faça sempre um backup do site, se todos do grupo aprovarem mudanças aumente a versão do terceiro digito como o exemplo abaixo.
+
+REvest:beta:Versão do site > (0.0.3.0)
+
+se houver novas mudanças mude o terceiro digito para 1,2,3,4,5.
+se atualizado para alpha crie um quarto digito como V (1.0.0.0).
+
+NÃO ENVIE SEM A VOTAÇÃO DO GRUPO.
+
+
+RELATORIOS (CSS):foram criadas versões simples com links de imagens, fique a vontade para criar uma foto padrão via pasta.
+
+RELATORIOS (2): Aguardando sugestões.
+
+RELATORIOS (3) Na subpasta do "contas.html ficou repetido o endereços em conta e endereços logo abaixo onde escrito google maps, eu renomeie para google maps afim de reutilizar para auto coletar bairros/endereços passo essa parte para o lucas ou o endrew.
+
+RELATORIOS (4) aguardando ao gp criar uma logo e votarmos a favor ou contra.
+
+RELATORIOS (5) aguardando o Lucas procurar uma nova imagem de fundo de site na resolução idêntica para o site.
+                         (preferencia: alguém procurando roupas em um cabide algo assim) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+REVEST direitos reservado @2025.
+
+(pedido de patenteamento ?)

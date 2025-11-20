@@ -1,0 +1,377 @@
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ticket_page.css') }}">
+{% endblock %}
+
+{% block title %}Contatar Suporte{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/dashboard"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="/doacao"><i class="fas fa-tshirt"></i> Fazer Doação</a></li>
+                    <li><a href="/historico"><i class="fas fa-history"></i> Histórico</a></li>
+                    
+                    <li class="active"><a href="/ticket"><i class="fas fa-headset"></i> Suporte</a></li>
+                    {% if session.role == 'admin' %}
+                    <li><a href="/admin"><i class="fas fa-cog"></i> Administração</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title"><i class="fas fa-headset"></i> Central de Suporte</h2>
+                </div>
+
+                <!-- Tabs -->
+                <div class="ticket-tabs">
+                    <button class="ticket-tab active" data-panel="novo">
+                        <i class="fas fa-plus-circle"></i> Novo Ticket
+                    </button>
+                    <button class="ticket-tab" data-panel="meus">
+                        <i class="fas fa-inbox"></i> Meus Tickets
+                        {% if tickets_abertos > 0 %}
+                        <span class="ticket-tab-badge">{{ tickets_abertos }}</span>
+                        {% endif %}
+                    </button>
+                </div>
+
+                <!-- Panel: Novo Ticket -->
+                <div id="novo" class="tab-panel active">
+                    <div class="ticket-detail">
+                        <h3 style="margin-top: 0; margin-bottom: 20px;">Criar Novo Ticket</h3>
+                        
+                        <form method="POST" action="/ticket">
+                            <div class="form-group">
+                                <label for="subject">Assunto <span style="color: #dc3545;">*</span></label>
+                                <input type="text" class="form-control" id="subject" name="subject" 
+                                       placeholder="Ex: Dúvida sobre doação, Problema técnico..." required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message">Mensagem <span style="color: #dc3545;">*</span></label>
+                                <textarea class="form-control" id="message" name="message" rows="8" 
+                                          placeholder="Descreva seu problema ou dúvida em detalhes..."
+                                          required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-paper-plane"></i> Enviar Ticket
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Panel: Meus Tickets -->
+                <div id="meus" class="tab-panel">
+                    {% if tickets_com_historico %}
+                        {% set ticket_aberto = false %}
+                        {% for ticket in tickets_com_historico %}
+                            {% if ticket.Status == 'aberto' %}
+                                {% set ticket_aberto = true %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <div></div>
+                            <button type="button" class="btn-danger" id="deleteAllTicketsBtn">
+                                <i class="fas fa-trash"></i> Excluir Todo Histórico
+                            </button>
+                        </div>
+                        
+                        <div class="tickets-list">
+                            {% for ticket in tickets_com_historico %}
+                            <div class="ticket-item ticket-item-{{ ticket.ID_Ticket }}" data-ticket-id="{{ ticket.ID_Ticket }}">
+                                <div class="ticket-header">
+                                    <div>
+                                        <div class="ticket-id">#TKT{{ ticket.ID_Ticket }}</div>
+                                        <div class="ticket-assunto">{{ ticket.Assunto }}</div>
+                                        <div class="ticket-preview">{{ ticket.Mensagem|truncate(100) }}</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <span class="ticket-status {{ ticket.Status }}">{{ ticket.Status|capitalize }}</span>
+                                        <div class="ticket-date">{{ ticket.Data_Criacao.strftime('%d/%m/%Y %H:%M') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Modal/Detalhe de Ticket -->
+                        {% for ticket in tickets_com_historico %}
+                        <div id="detail-{{ ticket.ID_Ticket }}" class="ticket-detail" style="display: none; margin-top: 20px;">
+                            <button class="ticket-close-btn" data-ticket-id="{{ ticket.ID_Ticket }}" style="background: none; border: none; cursor: pointer; color: #999; font-size: 24px; float: right;">×</button>
+                            
+                            <div class="ticket-detail-header">
+                                <div class="ticket-detail-title">#TKT{{ ticket.ID_Ticket }} - {{ ticket.Assunto }}</div>
+                                <div class="ticket-detail-meta">
+                                    <div><strong>Status:</strong> <span class="ticket-status {{ ticket.Status }}">{{ ticket.Status|capitalize }}</span></div>
+                                    <div><strong>Criado:</strong> {{ ticket.Data_Criacao.strftime('%d/%m/%Y %H:%M') }}</div>
+                                    <div><strong>Atualizado:</strong> {{ ticket.Data_Atualizacao.strftime('%d/%m/%Y %H:%M') }}</div>
+                                </div>
+                            </div>
+
+                            <div class="ticket-messages">
+                                <!-- Mensagem Original -->
+                                <div class="message">
+                                    <div class="message-author">
+                                        <span class="message-author-icon"><i class="fas fa-user"></i></span>
+                                        Você (Usuário)
+                                    </div>
+                                    <div class="message-content">{{ ticket.Mensagem }}</div>
+                                    <div class="message-date">{{ ticket.Data_Criacao.strftime('%d/%m/%Y %H:%M') }}</div>
+                                </div>
+
+                                <!-- Resposta do Admin (se houver) -->
+                                {% if '--- RESPOSTA DO ADMIN ---' in ticket.Mensagem %}
+                                    {% set partes = ticket.Mensagem.split('--- RESPOSTA DO ADMIN ---') %}
+                                    {% if partes|length > 1 %}
+                                    <div class="message admin">
+                                        <div class="message-author">
+                                            <span class="message-author-icon"><i class="fas fa-shield-alt"></i></span>
+                                            Administrador
+                                        </div>
+                                        <div class="message-content">{{ partes[1]|trim }}</div>
+                                        <div class="message-date">{{ ticket.Data_Atualizacao.strftime('%d/%m/%Y %H:%M') }}</div>
+                                    </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                            <!-- Ações de Ticket -->
+                            <div class="ticket-actions">
+                                <button type="button" class="btn-danger deleteTicketBtn" data-ticket-id="{{ ticket.ID_Ticket }}">
+                                    <i class="fas fa-trash"></i> Excluir Ticket
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="no-tickets">
+                        <i class="fas fa-inbox"></i>
+                        <p><strong>Nenhum ticket criado</strong></p>
+                        <p style="font-size: 13px;">Clique em "Novo Ticket" para abrir uma solicitação de suporte.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal de Confirmação Dupla - Excluir Ticket Individual -->
+<div id="confirmDeleteTicketModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Excluir Ticket?</h3>
+        </div>
+        <div class="modal-body">
+            <div class="confirmation-warning">
+                <i class="fas fa-info-circle"></i>
+                <strong>Atenção:</strong> Esta ação não pode ser desfeita.
+            </div>
+            <p>Tem certeza de que deseja excluir este ticket? Todos os dados e respostas serão removidos permanentemente.</p>
+            <p><strong>Clique em "Confirmar Exclusão" abaixo para prosseguir:</strong></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeDeleteTicketModal()">Cancelar</button>
+            <button class="btn-delete-confirm" onclick="confirmDeleteTicketFinal()">Confirmar Exclusão</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação Dupla - Excluir Todo Histórico -->
+<div id="confirmDeleteAllTicketsModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Excluir Todo Histórico?</h3>
+        </div>
+        <div class="modal-body">
+            <div class="confirmation-warning">
+                <i class="fas fa-info-circle"></i>
+                <strong>Atenção:</strong> Esta ação não pode ser desfeita.
+            </div>
+            <p>Tem certeza de que deseja excluir <strong>TODOS</strong> os seus tickets? Incluindo:</p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Todos os tickets abertos e respondidos</li>
+                <li>Todas as mensagens e respostas do admin</li>
+                <li>Todo o histórico de conversas</li>
+            </ul>
+            <p><strong>Clique em "Confirmar Exclusão" abaixo para prosseguir:</strong></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeDeleteAllTicketsModal()">Cancelar</button>
+            <button class="btn-delete-confirm" onclick="confirmDeleteAllTicketsFinal()">Confirmar Exclusão</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let ticketIdToDelete = null;
+
+    // Tabs functionality
+    document.querySelectorAll('.ticket-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const panelName = this.getAttribute('data-panel');
+            
+            document.querySelectorAll('.ticket-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            
+            this.classList.add('active');
+            document.getElementById(panelName).classList.add('active');
+        });
+    });
+
+    // Event delegation para tickets
+    document.addEventListener('click', function(event) {
+        // Clicar no ticket para ver detalhes
+        const ticketItem = event.target.closest('.ticket-item');
+        if (ticketItem) {
+            const ticketId = ticketItem.getAttribute('data-ticket-id');
+            showTicketDetail(ticketId);
+        }
+
+        // Clicar no botão de fechar
+        const closeBtn = event.target.closest('.ticket-close-btn');
+        if (closeBtn) {
+            const ticketId = closeBtn.getAttribute('data-ticket-id');
+            closeTicketDetail(ticketId);
+        }
+
+        // Clique em "Excluir Ticket"
+        const deleteBtn = event.target.closest('.deleteTicketBtn');
+        if (deleteBtn) {
+            ticketIdToDelete = deleteBtn.getAttribute('data-ticket-id');
+            openDeleteTicketModal();
+        }
+    });
+
+    // Botão "Excluir Todo Histórico"
+    document.getElementById('deleteAllTicketsBtn').addEventListener('click', function() {
+        openDeleteAllTicketsModal();
+    });
+
+    // Mostrar detalhe do ticket
+    function showTicketDetail(ticketId) {
+        const detail = document.getElementById('detail-' + ticketId);
+        if (detail) {
+            detail.style.display = 'block';
+            detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // Fechar detalhe do ticket
+    function closeTicketDetail(ticketId) {
+        const detail = document.getElementById('detail-' + ticketId);
+        if (detail) {
+            detail.style.display = 'none';
+        }
+    }
+
+    // Modais de Exclusão - Ticket Individual
+    function openDeleteTicketModal() {
+        document.getElementById('confirmDeleteTicketModal').classList.add('active');
+    }
+
+    function closeDeleteTicketModal() {
+        document.getElementById('confirmDeleteTicketModal').classList.remove('active');
+        ticketIdToDelete = null;
+    }
+
+    function confirmDeleteTicketFinal() {
+        if (!ticketIdToDelete) return;
+        
+        fetch('/ticket/delete/' + ticketIdToDelete, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove o ticket da página
+                const ticketItem = document.querySelector('.ticket-item-' + ticketIdToDelete);
+                if (ticketItem) {
+                    ticketItem.remove();
+                }
+                const ticketDetail = document.getElementById('detail-' + ticketIdToDelete);
+                if (ticketDetail) {
+                    ticketDetail.remove();
+                }
+                closeDeleteTicketModal();
+                alert('Ticket excluído com sucesso!');
+                // Atualizar a página após 1 segundo
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                alert('Erro ao excluir ticket: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao excluir ticket');
+        });
+    }
+
+    // Modais de Exclusão - Todo Histórico
+    function openDeleteAllTicketsModal() {
+        document.getElementById('confirmDeleteAllTicketsModal').classList.add('active');
+    }
+
+    function closeDeleteAllTicketsModal() {
+        document.getElementById('confirmDeleteAllTicketsModal').classList.remove('active');
+    }
+
+    function confirmDeleteAllTicketsFinal() {
+        fetch('/ticket/delete-all', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeDeleteAllTicketsModal();
+                alert('Todo o histórico de tickets foi excluído com sucesso!');
+                location.reload();
+            } else {
+                alert('Erro ao excluir histórico: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao excluir histórico');
+        });
+    }
+
+    // Fechar ao pressionar Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.querySelectorAll('.ticket-detail').forEach(detail => {
+                detail.style.display = 'none';
+            });
+            closeDeleteTicketModal();
+            closeDeleteAllTicketsModal();
+        }
+    });
+
+    // Fechar modal ao clicar fora
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', function(event) {
+            if (event.target === this) {
+                this.classList.remove('active');
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/coletor.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/coletor_page.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar do Coletor -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/coletor" class="active"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#"><i class="fas fa-map-marked-alt"></i> Rotas</a></li>
+                    <li><a href="/historico_coletor"><i class="fas fa-history"></i> Histórico</a></li>
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title">Painel do Coletor</h2>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="tabs-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="pendentes">
+                            <i class="fas fa-hourglass-half"></i> Pendentes
+                        </button>
+                        <button class="tab-btn" data-tab="finalizadas">
+                            <i class="fas fa-check-circle"></i> Finalizadas
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab: Coletas Pendentes -->
+                <div id="pendentes" class="tab-content active">
+                    {% if coletas_pendentes %}
+                    <div class="coletas-list">
+                        {% for coleta in coletas_pendentes %}
+                        <div class="coleta-card">
+                            <div class="coleta-header">
+                                <span class="coleta-id">#REV{{ coleta.id }}</span>
+                                <span class="coleta-date">{{ coleta.data }}</span>
+                                <span class="status-badge status-aprovada">Aprovada</span>
+                            </div>
+                            
+                            <div class="coleta-details">
+                                <p><strong>Doador:</strong> {{ coleta.name }}</p>
+                                <p><strong>Endereço:</strong> {{ coleta.full_address }}</p>
+                                <p><strong>CEP:</strong> {{ coleta.cep }}</p>
+                                
+                                <div class="coleta-items">
+                                    <h4>Itens para Coletar:</h4>
+                                    <ul>
+                                        {% if coleta.itens.items is defined %}
+                                            {% for item, quantity in coleta.itens.items() %}
+                                                {% if quantity|int > 0 %}
+                                                    <li>{{ quantity }}x {{ item|capitalize }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for it in coleta.itens %}
+                                                <li>{{ it.Quantidade }}x {{ it.Tipo|capitalize }}{% if it.Tamanho %} - Tamanho: {{ it.Tamanho }}{% endif %}{% if it.Categoria %} - {{ it.Categoria }}{% endif %}</li>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="coleta-actions">
+                                <a href="https://www.google.com/maps?q={{ coleta.full_address }}" 
+                                   target="_blank" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-map-marker-alt"></i> Ver no Mapa
+                                </a>
+                                <a href="{{ url_for('marcar_coletada', donation_id=coleta.id) }}" 
+                                   class="btn btn-success">
+                                    <i class="fas fa-check"></i> Marcar como Coletada
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <p>Nenhuma coleta pendente no momento.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Tab: Coletas Finalizadas -->
+                <div id="finalizadas" class="tab-content">
+                    {% if coletas_finalizadas %}
+                    <div class="coletas-list">
+                        {% for coleta in coletas_finalizadas %}
+                        <div class="coleta-card coleta-card-finalizada">
+                            <div class="coleta-header">
+                                <span class="coleta-id">#REV{{ coleta.id }}</span>
+                                <span class="coleta-date">{{ coleta.data }}</span>
+                                <span class="status-badge status-coletada">Coletada</span>
+                            </div>
+                            
+                            <div class="coleta-details">
+                                <p><strong>Doador:</strong> {{ coleta.name }}</p>
+                                <p><strong>Endereço:</strong> {{ coleta.full_address }}</p>
+                                <p><strong>CEP:</strong> {{ coleta.cep }}</p>
+                                
+                                <div class="coleta-items">
+                                    <h4>Itens Coletados:</h4>
+                                    <ul>
+                                        {% if coleta.itens.items is defined %}
+                                            {% for item, quantity in coleta.itens.items() %}
+                                                {% if quantity|int > 0 %}
+                                                    <li>{{ quantity }}x {{ item|capitalize }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for it in coleta.itens %}
+                                                <li>{{ it.Quantidade }}x {{ it.Tipo|capitalize }}{% if it.Tamanho %} - Tamanho: {{ it.Tamanho }}{% endif %}{% if it.Categoria %} - {{ it.Categoria }}{% endif %}</li>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="coleta-actions">
+                                <a href="https://www.google.com/maps?q={{ coleta.full_address }}" 
+                                   target="_blank" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-map-marker-alt"></i> Ver no Mapa
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <p>Nenhuma coleta finalizada ainda.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Tabs functionality
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            
+            // Remove active from all tabs and contents
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // Add active to clicked tab
+            this.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        });
+    });
+</script>
+{% endblock %}

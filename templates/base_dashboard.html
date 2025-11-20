@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}REvest{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS Base do Dashboard -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_dashboard.css') }}">
+
+    <!-- CSS Específico da Página -->
+    {% block page_css %}{% endblock %}
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+
+    <link rel="stylesheet" href="/static/css/base_dashboard.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+</head>
+<body>
+
+    <!-- Header Simplificado para Dashboard -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo-container">
+                    <a class="logo" href="/dashboard">
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="REvest Logo" style="height: 40px;">
+                    </a>
+                </div>
+                <div class="auth-buttons">
+                    <div class="account-menu-container">
+                      <div class="account-menu-trigger" id="accountMenuTrigger">
+                        <span class="account-icon">
+                          <i class="fa fa-user" style="font-size: 22px;"></i>
+                        </span>
+                        <span class="account-name">{{ session.name[:8] }}{% if session.name|length > 8 %}...{% endif %}</span>
+                      </div>
+                      <div class="account-menu" id="accountMenu" style="display:none;">
+                        <ul>
+                          <li><a href="/conta/editar">Editar Conta</a></li>
+                          <li><a href="/conta/senha">Mudar Senha</a></li>
+                          <li><a href="/conta/endereco">Endereço</a></li>
+                          <li><a href="/conta/suporte">Suporte</a></li>
+                          <li><a href="/conta/deletar" style="color:var(--danger);">Deletar Conta</a></li>
+                          <li><a href="/logout" style="color:var(--gray);">Sair</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer Simplificado -->
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2025 REvest - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<!-- Navegação: proteção contra back/forward e botões laterais do mouse -->
+<script>
+(function () {
+  try {
+    history.pushState({preventBack: true}, document.title, location.href);
+    window.addEventListener('popstate', function (e) {
+      history.pushState({preventBack: true}, document.title, location.href);
+      const el = document.getElementById('__nav_block_toast');
+      if (el) {
+        el.style.display = 'block';
+        clearTimeout(el.__t);
+        el.__t = setTimeout(() => el.style.display = 'none', 1800);
+      }
+    });
+    window.addEventListener('auxclick', function (e) {
+      if (e.button === 3 || e.button === 4) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, {passive: false});
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      if (e.key === 'Backspace') {
+        const el = document.activeElement;
+        const tag = el && el.tagName ? el.tagName.toUpperCase() : '';
+        const editable = el && (el.isContentEditable ||
+                                tag === 'INPUT' || tag === 'TEXTAREA' ||
+                                (el.getAttribute && el.getAttribute('role') === 'textbox'));
+        if (!editable || el.readOnly || el.disabled) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    }, {passive: false});
+    const toast = document.createElement('div');
+    toast.id = '__nav_block_toast';
+    toast.style.cssText = 'display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:8px 12px;border-radius:6px;background:rgba(0,0,0,0.75);color:#fff;font-size:13px;z-index:99999';
+    toast.textContent = 'Navegação por histórico desabilitada nesta página.';
+    document.documentElement.appendChild(toast);
+  } catch (err) {
+    console.error('Nav-protection error:', err);
+  }
+})();
+</script>
+
+</body>
+</html>

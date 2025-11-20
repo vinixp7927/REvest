@@ -1,0 +1,96 @@
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/coletor.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/historico_coletor.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar do Coletor -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/coletor"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#"><i class="fas fa-map-marked-alt"></i> Rotas</a></li>
+                    <li><a href="/historico_coletor" class="active"><i class="fas fa-history"></i> Histórico</a></li>
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title"><i class="fas fa-history"></i> Histórico</h2>
+                </div>
+
+                <!-- Coletas Finalizadas -->
+                {% if coletas_finalizadas %}
+                <div class="coletas-list">
+                    {% for coleta in coletas_finalizadas %}
+                    <div class="coleta-card coleta-card-finalizada">
+                        <div class="coleta-header">
+                            <span class="coleta-id">#REV{{ coleta.id }}</span>
+                            <span class="coleta-date">{{ coleta.data }}</span>
+                            <span class="status-badge status-coletada">Coletada</span>
+                        </div>
+                        
+                        <div class="coleta-details">
+                            <p><strong>Doador:</strong> {{ coleta.name }}</p>
+                            <p><strong>Endereço:</strong> {{ coleta.full_address }}</p>
+                            <p><strong>CEP:</strong> {{ coleta.cep }}</p>
+                            
+                            <div class="coleta-items">
+                                <h4>Itens Coletados:</h4>
+                                <ul>
+                                    {% if coleta.itens.items is defined %}
+                                        {% for item, quantity in coleta.itens.items() %}
+                                            {% if quantity|int > 0 %}
+                                                <li>{{ quantity }}x {{ item|capitalize }}</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for it in coleta.itens %}
+                                            <li>{{ it.Quantidade }}x {{ it.Tipo|capitalize }}{% if it.Tamanho %} - Tamanho: {{ it.Tamanho }}{% endif %}{% if it.Categoria %} - {{ it.Categoria }}{% endif %}</li>
+                                        {% endfor %}
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <p>Você ainda não tem coletas finalizadas.</p>
+                </div>
+                {% endif %}
+
+                <!-- Seção de Gerenciar Histórico -->
+                <div class="history-management-section">
+                    <div class="section-title">
+                        <i class="fas fa-trash-alt"></i> Gerenciar Histórico
+                    </div>
+                    
+                    {% if solicitacao_pendente %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-hourglass-end"></i>
+                        <p>Você tem uma solicitação de exclusão pendente desde <strong>{{ solicitacao_pendente.Data_Solicitacao.strftime('%d/%m/%Y') }}</strong></p>
+                        <p>O administrador está avaliando sua solicitação.</p>
+                    </div>
+                    {% else %}
+                    <div class="management-card">
+                        <p>Deseja limpar seu histórico de coletas? Essa ação requer aprovação do administrador.</p>
+                        <form method="POST" action="{{ url_for('solicitar_exclusao_historico', tipo='coletor') }}" style="display: inline;">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Solicitar Exclusão do Histórico
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,46 @@
+    <link rel="stylesheet" href="/static/css/ticket_success.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ticket_success.css') }}">
+{% endblock %}
+
+{% block title %}Mensagem Enviada{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/dashboard"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="/doacao"><i class="fas fa-tshirt"></i> Fazer Doação</a></li>
+                    <li><a href="/historico"><i class="fas fa-history"></i> Histórico</a></li>
+                    
+                    <li class="active"><a href="/ticket"><i class="fas fa-headset"></i> Suporte</a></li>
+                    {% if session.role == 'admin' %}
+                    <li><a href="/admin"><i class="fas fa-cog"></i> Administração</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title">Mensagem Enviada</h2>
+                </div>
+                
+                <div class="alert alert-success">
+                    <p>Sua mensagem foi enviada com sucesso! Nossa equipe entrará em contato em breve.</p>
+                </div>
+                
+                <div class="text-center">
+                    <a href="/dashboard" class="btn btn-primary">Voltar ao Início</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

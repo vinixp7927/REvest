@@ -1,0 +1,297 @@
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/doacao_detalhes.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="doacao-detalhes-container">
+    <div class="doacao-detalhes-wrapper">
+        <div class="doacao-detalhes-header">
+            <h2><i class="fas fa-box-open"></i> Detalhes dos Itens</h2>
+            <p>Especifique o tamanho e categoria para cada item doado</p>
+        </div>
+
+        <div class="progress-info">
+            <i class="fas fa-info-circle"></i>
+            Preencha todos os campos obrigatórios para cada item antes de enviar
+        </div>
+
+        <form class="doacao-detalhes-form" action="{{ url_for('doacao_detalhes') }}" method="POST">
+            <input type="hidden" name="details_token" value="{{ details_token }}">
+
+            <!-- Roupas -->
+            {% if ranges.get('roupas') %}
+            <div>
+                <div class="item-group-title"><i class="fas fa-tshirt"></i> Roupas</div>
+                {% for i in ranges['roupas'] %}
+                <div class="item-group">
+                    <div class="item-group-title" style="margin-bottom: 12px; margin-top: 0; border: none; font-size: 14px;">Item #{{ i+1 }}</div>
+                    <div class="item-fields">
+                        <div class="form-field">
+                            <label for="roupas_size_{{ i }}">Tamanho</label>
+                            <select name="roupas_size_{{ i }}" id="roupas_size_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>PP</option>
+                                <option>P</option>
+                                <option>M</option>
+                                <option>G</option>
+                                <option>GG</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="roupas_target_{{ i }}">Categoria</label>
+                            <select name="roupas_target_{{ i }}" id="roupas_target_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>Masculino</option>
+                                <option>Feminino</option>
+                                <option>Infantil</option>
+                                <option>Bebê</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-field" style="margin-top: 10px;">
+                        <label for="roupas_desc_{{ i }}">Descrição (opcional)</label>
+                        <input type="text" name="roupas_desc_{{ i }}" id="roupas_desc_{{ i }}" placeholder="Ex: Azul, com bolsos..." style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Calças -->
+            {% if ranges.get('calças') %}
+            <div>
+                <div class="item-group-title"><i class="fas fa-jeans"></i> Calças</div>
+                {% for i in ranges['calças'] %}
+                <div class="item-group">
+                    <div class="item-group-title" style="margin-bottom: 12px; margin-top: 0; border: none; font-size: 14px;">Item #{{ i+1 }}</div>
+                    <div class="item-fields">
+                        <div class="form-field">
+                            <label for="calças_size_{{ i }}">Tamanho</label>
+                            <select name="calças_size_{{ i }}" id="calças_size_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>P</option>
+                                <option>M</option>
+                                <option>G</option>
+                                <option>GG</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="calças_target_{{ i }}">Categoria</label>
+                            <select name="calças_target_{{ i }}" id="calças_target_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>Masculino</option>
+                                <option>Feminino</option>
+                                <option>Infantil</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-field" style="margin-top: 10px;">
+                        <label for="calças_desc_{{ i }}">Descrição (opcional)</label>
+                        <input type="text" name="calças_desc_{{ i }}" id="calças_desc_{{ i }}" placeholder="Ex: Jeans azul..." style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Blusas -->
+            {% if ranges.get('blusas') %}
+            <div>
+                <div class="item-group-title"><i class="fas fa-shirt"></i> Blusas</div>
+                {% for i in ranges['blusas'] %}
+                <div class="item-group">
+                    <div class="item-group-title" style="margin-bottom: 12px; margin-top: 0; border: none; font-size: 14px;">Item #{{ i+1 }}</div>
+                    <div class="item-fields">
+                        <div class="form-field">
+                            <label for="blusas_size_{{ i }}">Tamanho</label>
+                            <select name="blusas_size_{{ i }}" id="blusas_size_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>PP</option>
+                                <option>P</option>
+                                <option>M</option>
+                                <option>G</option>
+                                <option>GG</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="blusas_target_{{ i }}">Categoria</label>
+                            <select name="blusas_target_{{ i }}" id="blusas_target_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>Masculino</option>
+                                <option>Feminino</option>
+                                <option>Infantil</option>
+                                <option>Bebê</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Roupas Íntimas -->
+            {% if ranges.get('roupas_intimas') %}
+            <div>
+                <div class="item-group-title"><i class="fas fa-layer-group"></i> Roupas Íntimas</div>
+                {% for i in ranges['roupas_intimas'] %}
+                <div class="item-group">
+                    <div class="item-group-title" style="margin-bottom: 12px; margin-top: 0; border: none; font-size: 14px;">Item #{{ i+1 }}</div>
+                    <div class="item-fields">
+                        <div class="form-field">
+                            <label for="roupas_intimas_size_{{ i }}">Tamanho</label>
+                            <select name="roupas_intimas_size_{{ i }}" id="roupas_intimas_size_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>P</option>
+                                <option>M</option>
+                                <option>G</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="roupas_intimas_target_{{ i }}">Categoria</label>
+                            <select name="roupas_intimas_target_{{ i }}" id="roupas_intimas_target_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>Masculino</option>
+                                <option>Feminino</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-field" style="margin-top: 10px;">
+                        <label for="roupas_intimas_desc_{{ i }}">Descrição (opcional)</label>
+                        <input type="text" name="roupas_intimas_desc_{{ i }}" id="roupas_intimas_desc_{{ i }}" placeholder="Ex: Cueca, sutiã, meias..." style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Tênis -->
+            {% if ranges.get('tênis') %}
+            <div>
+                <div class="item-group-title"><i class="fas fa-shoe-prints"></i> Tênis</div>
+                {% for i in ranges['tênis'] %}
+                <div class="item-group">
+                    <div class="item-group-title" style="margin-bottom: 12px; margin-top: 0; border: none; font-size: 14px;">Item #{{ i+1 }}</div>
+                    <div class="item-fields">
+                        <div class="form-field">
+                            <label for="tênis_size_{{ i }}">Tamanho</label>
+                            <select name="tênis_size_{{ i }}" id="tênis_size_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>32</option>
+                                <option>33</option>
+                                <option>34</option>
+                                <option>35</option>
+                                <option>36</option>
+                                <option>37</option>
+                                <option>38</option>
+                                <option>39</option>
+                                <option>40</option>
+                                <option>41</option>
+                                <option>42</option>
+                                <option>43</option>
+                                <option>44</option>
+                                <option>45</option>
+                                <option>46</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="tênis_target_{{ i }}">Categoria</label>
+                            <select name="tênis_target_{{ i }}" id="tênis_target_{{ i }}">
+                                <option value="">Selecione</option>
+                                <option>Masculino</option>
+                                <option>Feminino</option>
+                                <option>Infantil</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Acessórios -->
+            {% if ranges.get('acessórios') %}
+            <div>
+                <div class="item-group-title"><i class="fas fa-umbrella-beach"></i> Acessórios</div>
+                {% for i in ranges['acessórios'] %}
+                <div class="item-group">
+                    <div class="item-group-title" style="margin-bottom: 12px; margin-top: 0; border: none; font-size: 14px;">Item #{{ i+1 }}</div>
+                    <div class="form-field" style="grid-column: 1 / -1;">
+                        <label for="acessórios_target_{{ i }}">Tipo de Acessório</label>
+                        <select name="acessórios_target_{{ i }}" id="acessórios_target_{{ i }}">
+                            <option value="">Selecione</option>
+                            <option>Bolsa</option>
+                            <option>Chapéu</option>
+                            <option>Cinto</option>
+                            <option>Cachecol</option>
+                            <option>Luva</option>
+                            <option>Meia</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-field" style="margin-top: 10px; grid-column: 1 / -1;">
+                        <label for="acessórios_desc_{{ i }}">Descrição (opcional)</label>
+                        <input type="text" name="acessórios_desc_{{ i }}" id="acessórios_desc_{{ i }}" placeholder="Ex: Bolsa de couro marrom..." style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-submit">
+                    <i class="fas fa-check-circle"></i> Enviar Detalhes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Validação de campos obrigatórios antes de submeter
+    document.querySelector('.doacao-detalhes-form').addEventListener('submit', function(e) {
+        const form = e.target;
+        const items = form.querySelectorAll('.item-group');
+        let filledItemsCount = 0;
+        
+        items.forEach(item => {
+            // Procurar por todos os selects dentro do item
+            const allSelects = item.querySelectorAll('select');
+            const allInputs = item.querySelectorAll('input[type="text"]');
+            
+            // Verificar se há pelo menos um select preenchido
+            let hasFilledSelect = false;
+            allSelects.forEach(select => {
+                if (select.value && select.value.trim()) {
+                    hasFilledSelect = true;
+                }
+            });
+            
+            // Se há selects preenchidos, considerar como item válido
+            if (hasFilledSelect) {
+                // Contar quantos selects foram preenchidos
+                let filledSelectsCount = 0;
+                allSelects.forEach(select => {
+                    if (select.value && select.value.trim()) {
+                        filledSelectsCount++;
+                    }
+                });
+                
+                // Para roupas: precisa de 2 selects (tamanho + categoria)
+                // Para acessórios: precisa de 1 select (tipo) ou descrição
+                if (allSelects.length >= 2 && filledSelectsCount >= 2) {
+                    filledItemsCount++;
+                } else if (allSelects.length === 1 && filledSelectsCount === 1) {
+                    filledItemsCount++;
+                }
+            }
+        });
+        
+        if (filledItemsCount === 0) {
+            e.preventDefault();
+            alert('⚠️ Por favor, preencha pelo menos 1 item com tamanho E categoria!');
+        }
+    });
+</script>
+{% endblock %}

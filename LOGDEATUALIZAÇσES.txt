@@ -1,0 +1,149 @@
+ATUALIZADO POR VINICIUS 03/08/25
+
+!NÃO DISPONIBILIZAR PARA PROFESSORES E GRUPOS!
+
+MUDANÇAS 
+
+1. NOVA INTERFACE A FAVOR DO GRUPO INTEIRO COM DASHBOARD PARA CADASTRO INICIAL.
+
+2. REMOÇÃO DO BOTÃO CADASTRO LOCALIZADO AO LADO DO BOTÃO LOGIN.
+
+3. NOVA PAGINA PARA CRIAÇÃO DE TICKET PARA ADMINISTRAÇÃO EM DESENVOLVIMENTO.
+
+4. CONTADOR DE DOAÇÕES PARA USUARIOS APÓS UMA DOAÇÃO.
+
+5. BOTÕES DE REVISAR PEDIDOS PARA ADMS JUNTAMENTE COM O BOTÃO DE CANCELAR DOAÇÃO.
+
+6. NOVA INTERFACE E ESTILIZAÇÃO PARA ADMS ONDE DEIXA CENTRALIZADO E MOSTRA NOMES,NUMEROS,CEP,ENDEREÇOS, DOS DOADORES PARA COLETAS E CANCELAMENTOS MANUAIS.
+
+7. ESTILIZAÇÃO E REMAP DO LOGIN COM A LOGO "REvest" E BOTÃO "LOGIN"
+
+8. DESENVOLVENDO UM TERCEIRO USUARIO PARA CATEGORIA (COLETORES)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+(REPAROS/BUGS/DESENVOLVIMENTOS)
+
+1. LOGIN NÃO VINUCULADO AO CADASTRO CENTRAL INICIAL DO SITE: (CORRIGIDO)
+
+2. HISTORICO NÃO ABRE: (PARCIALMENTE CORRIGIDO, PRECISA DE ESTILIZAÇÃO)! 
+
+3. NOME DE USUARIO COMO "NONE" AO LOGAR: (CORRIGIDO)
+
+4. IMPLEMENTAÇÃO DE TICKET PARA ADMINISTRAÇÃO: (EM DESENVOLVIMENTO)
+
+5. SALVAR USUARIOS DO SITE (NECESSITA DE NODE) ?
+
+6. BOTÕES INICIAIS "COMO DOAR,INICIO,CONTATO" (NÃO DEFENIDO)!
+
+7. LOGO PARA SITE NO LOCAL ESQUERDO DO NOME REVEST (AGUARDANDO CRIAÇÃO)!
+
+8. NOVA IMAGEM DE FUNDO DE SITE (AGUARDANDO LUCAS)!
+                    03/08/25
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+17/08/25 REvest beta 4.5/5.1 atualizações:
+
+1.novo usuário salvo no site com nome de coletor(coletores)
+
+2.possibilidade de abrir e visualizar o google maps sem api.
+
+3.correção de bugs ao clicar em doar e contar como 2 clicks
+
+4.troca do login e senhas para melhor segurança(LEIA O APP.PY PARA LOGAR COMO ADM OU DEMAIS)
+
+5.funcionalidade de deletar conta(Ainda em andamento)
+
+6.adição de botão voltar para categoria coletores(operacional)
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+REvest beta 0.0.6.5 / 22/10/2025  atualizações por Vinicius.
+
+📋 LOG DE ATUALIZAÇÕES - REvest
+VERSÃO 0.6.5.0 - Sistema de Moderação
+ NOVAS FUNCIONALIDADES
+
+1. Painel de Moderação Completo
+
+Acesso exclusivo para administradores
+
+Lista completa de todos os usuários cadastrados
+
+Visualização de dados: ID, nome, email, senha, cargo, data de cadastro
+
+Sistema de pesquisa por nome e email
+
+2. Sistema de Hierarquia e Cargos
+
+Promoção/Demissão de usuários
+
+Cargos disponíveis: Usuário → Coletor → Administrador
+
+Proteção do ADMIN principal contra alterações
+
+3. Sistema de Moderação
+
+Banimento de usuários com motivo
+
+Desbanimento de usuários
+
+Silenciamento (impede doações e tickets)
+
+Dessilenciamento de usuários
+
+4. Banco de Dados Atualizado
+
+Novos campos: is_banned, is_muted, ban_reason, banned_at, banned_by
+
+Estrutura relacional completa
+
+Persistência de dados entre sessões
+
+ MELHORIAS TÉCNICAS
+5. CRUD Completo em 3 Entidades
+
+Users: Create, Read, Update, Delete
+
+Addresses: CRUD completo de endereços
+
+Donations: Sistema completo de doações
+
+6. Segurança e Validações
+
+Verificação de banimento no login
+
+Bloqueio de ações para usuários silenciados
+
+Proteção de rotas administrativas
+
+Validação de sessões
+
+ PÁGINAS ADICIONADAS
+/moderacao - Painel de moderação
+
+Novas rotas API para ações de moderação
+
+Templates atualizados com navegação unificada
+
+MUDANÇAS NA ESTRUTURA
+Migração de dados em memória para SQLite
+
+Sistema de templates unificado (base_dashboard.html)
+
+CSS responsivo para todas as páginas
+
+Sidebar de navegação consistente
+
+PRÓXIMAS ATUALIZAÇÕES POTENCIAIS
+Sistema de logs de moderação
+
+Relatórios e estatísticas avançadas
+
+Sistema de notificações
+
+API REST para integrações
+
+Status:  SISTEMA ESTÁVEL E FUNCIONAL
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

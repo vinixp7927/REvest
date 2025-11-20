@@ -1,0 +1,261 @@
+/* ========== VARIÁVEIS ========== */
+:root {
+  --primary: #4caf50;
+  --primary-dark: #388e3c;
+  --light: #f9f9f9;
+  --dark: #222;
+  --gray: #666;
+}
+
+/* ========== BASE ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #fff;
+  color: var(--dark);
+  overflow-x: hidden;
+}
+
+/* ========== NAVBAR ========== */
+header {
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: fixed;
+  top: 0;
+  z-index: 999;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 25px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo img {
+  height: 48px;
+  width: auto;
+}
+
+.nav-links {
+  display: flex;
+  gap: 35px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--dark);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--primary);
+}
+
+.auth-buttons .btn {
+  padding: 10px 24px;
+  border-radius: 30px;
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.auth-buttons .btn:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* ========== HERO ========== */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 120px 60px 60px;
+  background: url("/static/img/background.jpg") no-repeat center center/cover;
+  color: white;
+}
+
+.hero-left {
+  flex: 1;
+  max-width: 550px;
+}
+
+.hero-left h1 {
+  font-size: 56px;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  text-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+
+.hero-left p {
+  font-size: 20px;
+  margin-bottom: 30px;
+  color: #f0f0f0;
+}
+
+.hero-left .btn-primary {
+  padding: 14px 36px;
+  font-size: 18px;
+  border-radius: 35px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  transition: all 0.3s;
+}
+
+.hero-left .btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Card lateral (cadastro) */
+.hero-right {
+  flex: 1;
+  max-width: 480px;
+  background: #fff;
+  color: #333;
+  padding: 45px 40px;
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.2);
+  backdrop-filter: blur(4px);
+}
+
+.hero-right h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--dark);
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  margin-bottom: 18px;
+}
+
+.btn-block {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.btn-block:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* ========== FEATURES ========== */
+.features {
+  background: white;
+  padding: 80px 20px;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 36px;
+  color: var(--dark);
+  margin-bottom: 60px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 35px;
+}
+
+.feature-card {
+  background: var(--light);
+  border-radius: 12px;
+  text-align: center;
+  padding: 35px 25px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-card i {
+  font-size: 48px;
+  color: var(--primary);
+  margin-bottom: 18px;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* ========== RESPONSIVIDADE ========== */
+@media (max-width: 992px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 140px 30px 60px;
+  }
+
+  .hero-left, .hero-right {
+    max-width: 100%;
+  }
+
+  .hero-right {
+    margin-top: 40px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-left h1 {
+    font-size: 40px;
+  }
+
+  .hero-left p {
+    font-size: 16px;
+  }
+
+  .hero-right {
+    padding: 35px 25px;
+  }
+
+  .auth-buttons .btn {
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-left h1 {
+    font-size: 32px;
+  }
+
+  .hero-left p {
+    font-size: 15px;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - REvest</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registrar.css') }}">
+
+    <link rel="stylesheet" href="/static/css/registrar.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+</head>
+<body>
+    <section class="login-container">
+        <div class="login-box">
+            <h1>Crie sua conta</h1>
+            <form action="{{ url_for('registrar') }}" method="POST">
+                <input type="text" name="nome" placeholder="Seu nome" required>
+                <input type="email" name="email" placeholder="Seu e-mail" required>
+                <input type="password" name="senha" placeholder="Crie uma senha" required>
+                <input type="password" name="confirmar_senha" placeholder="Confirme sua senha" required>
+                <button type="submit" class="btn">Cadastrar</button>
+            </form>
+            <p>Já tem conta? <a href="{{ url_for('home') }}">Entrar</a></p>
+        </div>
+    </section>
+
+<!-- Navegação: proteção contra back/forward e botões laterais do mouse -->
+<script>
+(function () {
+  try {
+    history.pushState({preventBack: true}, document.title, location.href);
+    window.addEventListener('popstate', function (e) {
+      history.pushState({preventBack: true}, document.title, location.href);
+      const el = document.getElementById('__nav_block_toast');
+      if (el) {
+        el.style.display = 'block';
+        clearTimeout(el.__t);
+        el.__t = setTimeout(() => el.style.display = 'none', 1800);
+      }
+    });
+    window.addEventListener('auxclick', function (e) {
+      if (e.button === 3 || e.button === 4) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, {passive: false});
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      if (e.key === 'Backspace') {
+        const el = document.activeElement;
+        const tag = el && el.tagName ? el.tagName.toUpperCase() : '';
+        const editable = el && (el.isContentEditable ||
+                                tag === 'INPUT' || tag === 'TEXTAREA' ||
+                                (el.getAttribute && el.getAttribute('role') === 'textbox'));
+        if (!editable || el.readOnly || el.disabled) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    }, {passive: false});
+    const toast = document.createElement('div');
+    toast.id = '__nav_block_toast';
+    toast.style.cssText = 'display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:8px 12px;border-radius:6px;background:rgba(0,0,0,0.75);color:#fff;font-size:13px;z-index:99999';
+    toast.textContent = 'Navegação por histórico desabilitada nesta página.';
+    document.documentElement.appendChild(toast);
+  } catch (err) {
+    console.error('Nav-protection error:', err);
+  }
+})();
+</script>
+
+</body>
+</html>

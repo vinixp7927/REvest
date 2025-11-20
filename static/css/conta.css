@@ -1,0 +1,452 @@
+/* Área de revisão de endereços */
+.enderecos-revisao {
+    margin-top: 32px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 24px;
+}
+.enderecos-revisao h4 {
+    margin-bottom: 18px;
+    font-size: 22px;
+    color: #333;
+}
+.enderecos-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+.endereco-card {
+    background: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    padding: 18px 20px;
+    min-width: 260px;
+    max-width: 320px;
+    flex: 1 1 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.endereco-info {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #444;
+}
+.endereco-actions {
+    margin-top: 8px;
+}
+.endereco-card .cep {
+    font-size: 13px;
+    color: #888;
+}
+.endereco-card .padrao {
+    color: #219150;
+    font-weight: bold;
+    margin-left: 8px;
+}
+.endereco-card.vazio {
+    color: #888;
+    text-align: center;
+    background: none;
+    box-shadow: none;
+}
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;}
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: absolute;
+    left: -280px; /* AJUSTE ESTE VALOR PARA MOVER A LOGO HORIZONTALMENTE */
+    top: 50%;
+    transform: translateY(-50%);}
+.btn {
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;}
+.btn-primary {
+    background-color: var(--primary);
+    color: white;}
+.btn-primary:hover {
+    background-color: var(--primary-dark);}
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);}
+.btn-outline:hover {
+    background-color: var(--primary);
+    color: white;}
+.hero-right .form-control {
+  margin-bottom: 15px;}
+.hero .btn-primary {
+    padding: 12px 30px;
+    font-size: 18px;}
+.form-group {
+    margin-bottom: 20px;}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;}
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;}
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);}
+.btn-block {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;}
+/* Dashboard Styles */
+
+/* Estilo para o textarea do suporte na conta */
+form[action="/conta/suporte"] textarea[name="mensagem"] {
+    width: 100%;
+    min-width: 400px;
+    max-width: 800px;
+    height: 180px;
+    min-height: 180px;
+    font-size: 18px;
+    padding: 16px;
+    border-radius: 10px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+/* Formulário de endereço mais espaçado e grande */
+form[action="/conta/endereco"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+form[action="/conta/endereco"] input[type="text"],
+form[action="/conta/endereco"] input[type="email"],
+form[action="/conta/endereco"] input[type="number"],
+form[action="/conta/endereco"] input[type="checkbox"] {
+    flex: 1 1 180px;
+    min-width: 180px;
+    max-width: 320px;
+    padding: 12px;
+    font-size: 17px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+}
+form[action="/conta/endereco"] label {
+    font-size: 16px;
+    margin-right: 8px;
+}
+form[action="/conta/endereco"] button[type="submit"] {
+    padding: 12px 32px;
+    font-size: 18px;
+    border-radius: 8px;
+    margin-top: 8px;
+}
+.dashboard {
+    min-height: 100vh;
+    padding-top: 20px;}
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;}
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 30px;}
+.sidebar {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    height: fit-content;}
+.sidebar-menu {
+    list-style: none;}
+.sidebar-menu li {
+    margin-bottom: 10px;}
+.sidebar-menu a {
+    display: block;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: var(--dark);
+    border-radius: 5px;
+    transition: all 0.3s;}
+.sidebar-menu a:hover, .sidebar-menu a.active {
+    background-color: var(--primary);
+    color: white;}
+.sidebar-menu i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;}
+.main-content {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;}
+.content-title {
+    font-size: 24px;
+    font-weight: 500;}
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--light);
+    border: 1px solid #ddd;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;}
+/* Conta Page */
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;}
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 32px;}
+.profile-info h2 {
+    font-size: 24px;
+    margin-bottom: 5px;}
+.profile-info p {
+    color: var(--gray);}
+.address-form {
+    background-color: var(--light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;}
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;}
+.form-row .form-group {
+    flex: 1;}
+.address-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;}
+.address-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;}
+.address-card .default-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;}
+.address-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;}
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;}
+.btn-danger {
+    background-color: var(--danger);}
+.btn-danger:hover {
+    background-color: #bd2130;}
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;}
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;}
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;}
+/* ===== ESTILOS PARA REVISÃO ===== */
+.review-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    overflow: hidden;}
+.items-container {
+    display: grid;
+    gap: 12px;}
+.btn-approve, .btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-decoration: none;
+    transition: all 0.3s;
+    min-width: 240px;}
+.btn-approve {
+    background: #28a745;
+    color: white;
+    border: 2px solid #28a745;}
+.btn-approve:hover {
+    background: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);}
+.btn-cancel {
+    background: #dc3545;
+    color: white;
+    border: 2px solid #dc3545;}
+.btn-cancel:hover {
+    background: #c82333;
+    border-color: #bd2130;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);}
+.btn-approve i, .btn-cancel i {
+    margin-right: 10px;
+    font-size: 1.2rem;}
+/* ===== ESTILOS PARA TICKET ===== */
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;}
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 20px;}
+textarea.form-control {
+    min-height: 150px;
+    resize: vertical;}
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;}
+.btn-success {
+    background-color: #28a745;
+    color: white;}
+.btn-success:hover {
+    background-color: #218838;}
+/* Responsive */
+@media (max-width: 1200px) {
+    .logo-container {
+        left: 15px;}
+    }
+.logo-container {
+        position: static;
+        transform: none;
+        margin-bottom: 15px;}
+.form-actions .btn {
+    padding: 10px 20px;}
+.search-form .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;}
+.search-form .form-group {
+    flex: 1;}
+.btn-show-password {
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 3px;}
+.btn-show-password:hover {
+    background-color: #e9ecef;}
+.status-active {
+    background-color: #28a745;
+    color: white;}
+.action-buttons .btn {
+    font-size: 11px;
+    padding: 4px 8px;
+    white-space: nowrap;}
+.search-form .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;}
+.search-form .form-group {
+    flex: 1;
+    margin-bottom: 0;}
+.btn-show-password {
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 3px;
+    transition: all 0.3s;}
+.btn-show-password:hover {
+    background-color: #e9ecef;
+    color: #495057;}
+.status-active {
+    background-color: #28a745;
+    color: white;}
+.action-buttons .btn {
+    font-size: 11px;
+    padding: 4px 8px;
+    white-space: nowrap;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;}
+.action-buttons .btn-sm {
+    font-size: 11px;
+    padding: 4px 8px;}
+.action-buttons .btn-success {
+    background-color: #28a745;
+    color: white;}
+.action-buttons .btn-primary {
+    background-color: #007bff;
+    color: white;}
+.action-buttons .btn-warning {
+    background-color: #ffc107;
+    color: #856404;}
+.action-buttons .btn-danger {
+    background-color: #dc3545;
+    color: white;}
+.action-buttons .btn-info {
+    background-color: #17a2b8;
+    color: white;}
+.action-buttons .btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);}
+.action-buttons .btn {
+        font-size: 10px;
+        padding: 3px 6px;}

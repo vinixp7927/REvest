@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>REvest - Doação de Roupas</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+</head>
+<body>
+<!-- Header -->
+<header>
+<div class="container">
+<nav class="navbar">
+<div class="logo-container">
+    <a class="logo" href="/">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="REvest Logo" style="height: 40px;">
+    </a>
+</div>
+<ul class="nav-links">
+<li><a href="/">Início</a></li>
+<li><a href="#">Como Doar</a></li>
+<li><a href="#">Contato</a></li>
+</ul>
+<div class="auth-buttons">
+<button class="btn btn-outline" id="loginBtn">Fazer Login</button>
+</div>
+</nav>
+</div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+<div class="hero-left">
+<h1>Doe roupas Transforme vidas.</h1>
+<p>Doe roupas, calçados e acessórios e ajude quem precisa. Agende sua coleta gratuita!</p>
+<button class="btn btn-primary">Saiba Mais</button>
+</div>
+<div class="hero-right" style="max-width: 500px; padding: 100px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); border-radius: 20px;">
+<h2>Cadastre-se</h2>
+<form action="/register" method="POST">
+<div class="form-group">
+<input class="form-control" name="fullName" placeholder="Nome Completo" required type="text"/>
+</div>
+<div class="form-group">
+<input class="form-control" name="regEmail" placeholder="E-mail" required type="email"/>
+</div>
+<div class="form-group">
+<input class="form-control" name="cpf" placeholder="CPF (somente números)" required type="text"/>
+</div>
+<div class="form-row">
+    <div class="form-group">
+        <input class="form-control" name="cep" placeholder="CEP" required type="text"/>
+    </div>
+    <div class="form-group">
+        <input class="form-control" name="numero" placeholder="Número" required type="text"/>
+    </div>
+</div>
+<div class="form-group">
+<input class="form-control" name="regPassword" placeholder="Senha" required type="password"/>
+</div>
+<div class="form-group">
+<input class="form-control" name="confirmPassword" placeholder="Confirmar Senha" required type="password"/>
+</div>
+<button class="btn btn-primary btn-block" type="submit">FINALIZAR CADASTRO</button>
+</form>
+</div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+<div class="container">
+<h2 class="section-title">Por que doar?</h2>
+<div class="features-grid">
+<div class="feature-card">
+<i class="fas fa-hands-helping"></i>
+<h3>Ajuda quem precisa</h3>
+<p>Suas roupas usadas podem fazer a diferença na vida de pessoas em situação de vulnerabilidade.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-leaf"></i>
+<h3>Sustentabilidade</h3>
+<p>Reduza o desperdício e contribua para um mundo mais sustentável através da reutilização.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-heart"></i>
+<h3>Faça o bem</h3>
+<p>A doação de roupas é uma forma prática e significativa de ajudar sua comunidade.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+<div class="container">
+<div class="footer-grid">
+<div class="footer-column">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="REvest Logo" style="height: 50px; margin-bottom: 15px;">
+    <p>Conectando doadores a quem precisa, transformando roupas em esperança.</p>
+    <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+    </div>
+</div>
+<div class="footer-column">
+<h3>Links Rápidos</h3>
+<ul class="footer-links">
+<li><a href="/">Início</a></li>
+<li><a href="#">Como Doar</a></li>
+<li><a href="#">Sobre Nós</a></li>
+<li><a href="#">Contato</a></li>
+<li><a href="#">Termos de Uso</a></li>
+</ul>
+</div>
+<div class="footer-column">
+<h3>Nossos Parceiros</h3>
+<ul class="footer-links">
+<li><a href="#"></a></li>
+<li><a href="#"></a></li>
+<li><a href="#"></a></li>
+<li><a href="#"></a></li>
+</ul>
+</div>
+<div class="footer-column">
+<h3>Contato</h3>
+<ul class="footer-links">
+<li><i class="fas fa-map-marker-alt"></i> R. Jesuíno de Arruda, 2020, - São carlos</li>
+<li><i class="fas fa-phone"></i> (16) 9934-05190</li>
+<li><i class="fas fa-envelope"></i> REvest@gmail.com</li>
+</ul>
+</div>
+</div>
+<div class="footer-bottom">
+<p>© 2025 REvest - Todos os direitos reservados</p>
+</div>
+</div>
+</footer>
+
+<!-- Login Modal -->
+<div class="modal" id="loginModal">
+<div class="modal-content">
+<span class="close-modal">×</span>
+<h2 class="modal-title">Fazer Login</h2>
+<form action="/login" id="loginForm" method="POST">
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                <div class="form-group">
+<label for="email">E-mail</label>
+<input class="form-control" id="email" name="email" required type="email"/>
+</div>
+<div class="form-group">
+<label for="password">Senha</label>
+<input class="form-control" id="password" name="password" required type="password"/>
+</div>
+<div class="form-options">
+<div>
+<input id="remember" name="remember" type="checkbox"/>
+<label for="remember">Lembrar-me</label>
+</div>
+<a href="#">Esqueceu a senha?</a>
+</div>
+<button class="btn btn-primary btn-block" type="submit">Entrar</button>
+</form>
+<div class="form-footer">
+<p>Não tem uma conta? <a href="#" id="showRegister">Cadastre-se</a></p>
+</div>
+</div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal" id="registerModal">
+<div class="modal-content">
+<span class="close-modal">×</span>
+<h2 class="modal-title">Criar Conta</h2>
+<form action="/register" id="registerForm" method="POST">
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                <div class="form-group">
+<label for="fullName">Nome Completo</label>
+<input class="form-control" id="fullName" name="fullName" required type="text"/>
+</div>
+<div class="form-group">
+<label for="regEmail">E-mail</label>
+<input class="form-control" id="regEmail" name="regEmail" required type="email"/>
+</div>
+                <div class="form-group">
+<label for="cpf">CPF</label>
+<input class="form-control" id="cpf" name="cpf" required type="text" placeholder="Somente números" />
+</div>
+<div class="form-row">
+    <div class="form-group">
+        <label for="cep">CEP</label>
+        <input class="form-control" id="cep" name="cep" required type="text"/>
+    </div>
+    <div class="form-group">
+        <label for="numero">Número</label>
+        <input class="form-control" id="numero" name="numero" required type="text"/>
+    </div>
+</div>
+<div class="form-group">
+<label for="regPassword">Senha</label>
+<input class="form-control" id="regPassword" name="regPassword" required type="password"/>
+</div>
+<div class="form-group">
+<label for="confirmPassword">Confirmar Senha</label>
+<input class="form-control" id="confirmPassword" name="confirmPassword" required type="password"/>
+</div>
+<button class="btn btn-primary btn-block" type="submit">Cadastrar</button>
+</form>
+<div class="form-footer">
+<p>Já tem uma conta? <a href="#" id="showLogin">Fazer Login</a></p>
+</div>
+</div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<!-- Navegação: proteção contra back/forward e botões laterais do mouse -->
+<script>
+(function () {
+  try {
+    history.pushState({preventBack: true}, document.title, location.href);
+    window.addEventListener('popstate', function (e) {
+      history.pushState({preventBack: true}, document.title, location.href);
+      const el = document.getElementById('__nav_block_toast');
+      if (el) {
+        el.style.display = 'block';
+        clearTimeout(el.__t);
+        el.__t = setTimeout(() => el.style.display = 'none', 1800);
+      }
+    });
+    window.addEventListener('auxclick', function (e) {
+      if (e.button === 3 || e.button === 4) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, {passive: false});
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      if (e.key === 'Backspace') {
+        const el = document.activeElement;
+        const tag = el && el.tagName ? el.tagName.toUpperCase() : '';
+        const editable = el && (el.isContentEditable ||
+                                tag === 'INPUT' || tag === 'TEXTAREA' ||
+                                (el.getAttribute && el.getAttribute('role') === 'textbox'));
+        if (!editable || el.readOnly || el.disabled) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    }, {passive: false});
+    const toast = document.createElement('div');
+    toast.id = '__nav_block_toast';
+    toast.style.cssText = 'display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:8px 12px;border-radius:6px;background:rgba(0,0,0,0.75);color:#fff;font-size:13px;z-index:99999';
+    toast.textContent = 'Navegação por histórico desabilitada nesta página.';
+    document.documentElement.appendChild(toast);
+  } catch (err) {
+    console.error('Nav-protection error:', err);
+  }
+})();
+</script>
+
+</body>
+</html>

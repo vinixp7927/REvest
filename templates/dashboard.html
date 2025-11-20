@@ -1,0 +1,62 @@
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/base_dashboard.css">
+{% extends "base_dashboard.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="/dashboard" class="active"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="/doacao"><i class="fas fa-tshirt"></i> Fazer Doação</a></li>
+                    <li><a href="/historico"><i class="fas fa-history"></i> Histórico</a></li>
+                    
+                    <li><a href="/ticket"><i class="fas fa-headset"></i> Suporte</a></li>
+                    {% if session.role == 'admin' %}
+                    <li><a href="/admin"><i class="fas fa-cog"></i> Administração</a></li>
+                    {% elif session.role == 'coletor' %}
+                    <li><a href="/coletor"><i class="fas fa-truck"></i> Painel do Coletor</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="content-header">
+                    <h2 class="content-title">Painel de Controle</h2>
+                </div>
+                
+                <div class="welcome-message">
+                    <h3>Bem-vindo ao REvest!</h3>
+                    <p>Estamos felizes em tê-lo(a) conosco nessa jornada de solidariedade.</p>
+                    <p>Para começar a doar, clique no botão abaixo ou no menu "Fazer Doação".</p>
+                    
+                    <div class="cta-box">
+                        <a href="/doacao" class="btn btn-primary">
+                            <i class="fas fa-tshirt"></i> Fazer Doação Agora
+                        </a>
+                    </div>
+                    
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-number">{{ donation_count }}</div>
+                            <div class="stat-title">Doações Realizadas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">42</div>
+                            <div class="stat-title">Pessoas Ajudadas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
