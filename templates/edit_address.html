@@ -1,9 +1,9 @@
-    <link rel="stylesheet" href="/static/css/edit_address.css">
-    <link rel="stylesheet" href="/static/css/base.css">
 {% extends "base_dashboard.html" %}
 
 {% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_address.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/desktop_overrides.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile_admin_header.css') }}">
 {% endblock %}
 
 {% block title %}Editar Endereço{% endblock %}
@@ -50,7 +50,7 @@
 
                     <div class="form-group">
                         <label for="cep">CEP:</label>
-                        <input type="text" class="form-control" name="cep" value="{{ address.cep }}" required>
+                        <input type="text" class="form-control" name="cep" value="{{ address.cep }}" required maxlength="9" pattern="\d{5}-?\d{3}" title="8 dígitos (com ou sem hífen)">
                     </div>
 
                     <div class="form-group">
@@ -82,7 +82,7 @@
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                        <a href="{{ url_for('conta') }}" class="btn btn-outline">Cancelar</a>
+                        <a href="{{ url_for('conta_endereco_get') }}" class="btn btn-outline">Cancelar</a>
                     </div>
                 </form>
             </div>

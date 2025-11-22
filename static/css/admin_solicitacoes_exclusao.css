@@ -15,6 +15,33 @@
     padding-bottom: 15px;
     border-bottom: 2px solid #28a745;
 }
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 0; /* header size copied from fazer doações (desktop) */
+    position: relative;
+}
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: absolute;
+    left: -280px; /* horizontal offset for REvest logo (desktop) */
+    top: 50%;
+    transform: translateY(-50%);
+}
+.logo img {
+    height: 40px; /* logo height (desktop) */
+    width: auto;
+    transition: transform 0.3s;
+}
+.auth-buttons {
+    position: absolute;
+    right: -260px; /* account buttons horizontal offset (desktop) */
+    top: 50%;
+    transform: translateY(-50%);
+}
 
 .section-header h3 {
     margin: 0;

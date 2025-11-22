@@ -1747,3 +1747,58 @@ textarea.form-control {
         flex-direction: column;
     }
 }
+
+/* Info modals (Como Doar / Contato) - mobile-first */
+.info-modal {
+    display: none; /* JS will toggle to flex */
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 1200;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.info-modal .modal-content {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 760px;
+    padding: 22px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    text-align: center;
+    color: var(--dark);
+}
+.info-modal .modal-body p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+    margin-top: 8px;
+}
+.info-modal .modal-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: var(--primary);
+}
+.info-modal .close-modal {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 26px;
+    cursor: pointer;
+    color: var(--gray);
+}
+
+@media (max-width: 480px) {
+    .info-modal .modal-content {
+        padding: 16px;
+        border-radius: 10px;
+    }
+    .info-modal .modal-body p {
+        font-size: 14px;
+    }
+    .info-modal .modal-title {
+        font-size: 18px;
+    }
+}
+

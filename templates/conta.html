@@ -1,9 +1,11 @@
-    <link rel="stylesheet" href="/static/css/conta.css">
-    <link rel="stylesheet" href="/static/css/base.css">
 {% extends "base_dashboard.html" %}
 
 {% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/conta.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/desktop_overrides.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile_admin_header.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile_conta_support.css') }}">
+<script>document.addEventListener('DOMContentLoaded', function(){ document.body.classList.add('conta-page'); });</script>
 {% endblock %}
 
 {% block content %}
@@ -25,7 +27,7 @@
                 </ul>
             </div>
             <!-- Main Content -->
-                        <div class="main-content">
+                        <div class="main-content conta-support">
                                 <!-- Flash messages -->
                                 {% with messages = get_flashed_messages(with_categories=true) %}
                                     {% if messages %}
@@ -84,15 +86,21 @@
                     <input type="hidden" name="next" value="{{ next }}">
                     {% endif %}
                     <input type="text" name="type" placeholder="Tipo de Endereço" required>
-                    <input type="text" name="cep" placeholder="CEP" required>
+                    <input type="text" name="cep" placeholder="CEP" required maxlength="9" pattern="\d{5}-?\d{3}" title="8 dígitos (com ou sem hífen)">
                     <input type="text" name="street" placeholder="Rua" required>
                     <input type="text" name="number" placeholder="Número" required>
                     <input type="text" name="neighborhood" placeholder="Bairro" required>
                     <input type="text" name="city" placeholder="Cidade" required>
                     <input type="text" name="state" placeholder="Estado" required>
                     <input type="text" name="complement" placeholder="Complemento">
-                    <label><input type="checkbox" name="default"> Tornar endereço padrão</label>
-                    <button type="submit" class="btn btn-primary">Salvar Endereço</button>
+                    <div class="form-actions-row">
+                        <div class="actions-left">
+                            <label class="default-control"><input type="checkbox" name="default"><span class="default-control-text">Tornar endereço padrão</span></label>
+                        </div>
+                        <div class="actions-center">
+                            <button type="submit" class="btn btn-primary">Salvar Endereço</button>
+                        </div>
+                    </div>
                 </form>
 
                 <div class="enderecos-revisao">

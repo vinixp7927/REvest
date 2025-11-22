@@ -22,9 +22,9 @@
     </a>
 </div>
 <ul class="nav-links">
-<li><a href="/">Início</a></li>
-<li><a href="#">Como Doar</a></li>
-<li><a href="#">Contato</a></li>
+<li><a href="/" id="inicioBtn">Início</a></li>
+<li><a href="javascript:void(0)" id="comoDoarBtn" role="button"> <span id="footerComoDoar">Como Doar</span> </a></li>
+<li><a href="javascript:void(0)" id="contatoBtn" role="button"> <span id="footerContato">Contato</span> </a></li>
 </ul>
 <div class="auth-buttons">
 <button class="btn btn-outline" id="loginBtn">Fazer Login</button>
@@ -38,10 +38,13 @@
 <div class="hero-left">
 <h1>Doe roupas Transforme vidas.</h1>
 <p>Doe roupas, calçados e acessórios e ajude quem precisa. Agende sua coleta gratuita!</p>
-<button class="btn btn-primary">Saiba Mais</button>
+<button id="saibaMaisBtn" class="btn btn-primary">Saiba Mais</button>
 </div>
 <div class="hero-right" style="max-width: 500px; padding: 100px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); border-radius: 20px;">
 <h2>Cadastre-se</h2>
+{% if register_error %}
+  <div class="alert alert-danger" role="alert" style="margin-bottom:12px;">{{ register_error }}</div>
+{% endif %}
 <form action="/register" method="POST">
 <div class="form-group">
 <input class="form-control" name="fullName" placeholder="Nome Completo" required type="text"/>
@@ -50,11 +53,11 @@
 <input class="form-control" name="regEmail" placeholder="E-mail" required type="email"/>
 </div>
 <div class="form-group">
-<input class="form-control" name="cpf" placeholder="CPF (somente números)" required type="text"/>
+<input class="form-control" name="cpf" placeholder="CPF (somente números)" required type="text" maxlength="11" pattern="\d{11}" title="Somente 11 dígitos numéricos"/>
 </div>
 <div class="form-row">
     <div class="form-group">
-        <input class="form-control" name="cep" placeholder="CEP" required type="text"/>
+      <input class="form-control" name="cep" placeholder="CEP" required type="text" maxlength="9" pattern="\d{5}-?\d{3}" title="8 dígitos (com ou sem hífen)"/>
     </div>
     <div class="form-group">
         <input class="form-control" name="numero" placeholder="Número" required type="text"/>
@@ -103,33 +106,33 @@
     <img src="{{ url_for('static', filename='img/logo.png') }}" alt="REvest Logo" style="height: 50px; margin-bottom: 15px;">
     <p>Conectando doadores a quem precisa, transformando roupas em esperança.</p>
     <div class="social-links">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
+        <a href="javascript:void(0)"><i class="fab fa-facebook-f"></i></a>
+        <a href="javascript:void(0)"><i class="fab fa-instagram"></i></a>
+        <a href="javascript:void(0)"><i class="fab fa-twitter"></i></a>
+        <a href="javascript:void(0)"><i class="fab fa-youtube"></i></a>
     </div>
 </div>
 <div class="footer-column">
 <h3>Links Rápidos</h3>
 <ul class="footer-links">
 <li><a href="/">Início</a></li>
-<li><a href="#">Como Doar</a></li>
-<li><a href="#">Sobre Nós</a></li>
-<li><a href="#">Contato</a></li>
-<li><a href="#">Termos de Uso</a></li>
+<li><a href="javascript:void(0)" id="footerComoDoar">Como Doar</a></li>
+<li><a href="javascript:void(0)" id="footerSobre">Sobre Nós</a></li>
+<li><a href="javascript:void(0)" id="footerContato">Contato</a></li>
+<li><a href="javascript:void(0)"> <span style="opacity:0.4;cursor:not-allowed;">Termos de Uso</span> </a></li>
 </ul>
 </div>
 <div class="footer-column">
 <h3>Nossos Parceiros</h3>
 <ul class="footer-links">
-<li><a href="#"></a></li>
-<li><a href="#"></a></li>
-<li><a href="#"></a></li>
-<li><a href="#"></a></li>
+<li><a href="javascript:void(0)"></a></li>
+<li><a href="javascript:void(0)"></a></li>
+<li><a href="javascript:void(0)"></a></li>
+<li><a href="javascript:void(0)"></a></li>
 </ul>
 </div>
 <div class="footer-column">
-<h3>Contato</h3>
+<h3> <span id="footerContato">Contato</span> </h3>
 <ul class="footer-links">
 <li><i class="fas fa-map-marker-alt"></i> R. Jesuíno de Arruda, 2020, - São carlos</li>
 <li><i class="fas fa-phone"></i> (16) 9934-05190</li>
@@ -149,8 +152,8 @@
 <span class="close-modal">×</span>
 <h2 class="modal-title">Fazer Login</h2>
 <form action="/login" id="loginForm" method="POST">
-                {% if error %}
-                <div class="alert alert-danger">{{ error }}</div>
+                {% if login_error %}
+                <div class="alert alert-danger">{{ login_error }}</div>
                 {% endif %}
                 <div class="form-group">
 <label for="email">E-mail</label>
@@ -165,12 +168,47 @@
 <input id="remember" name="remember" type="checkbox"/>
 <label for="remember">Lembrar-me</label>
 </div>
-<a href="#">Esqueceu a senha?</a>
+  <a href="javascript:void(0)">Esqueceu a senha?</a>
 </div>
 <button class="btn btn-primary btn-block" type="submit">Entrar</button>
 </form>
 <div class="form-footer">
-<p>Não tem uma conta? <a href="#" id="showRegister">Cadastre-se</a></p>
+<p>Não tem uma conta? <a href="javascript:void(0)" id="showRegister">Cadastre-se</a></p>
+</div>
+</div>
+
+<!-- Modais informativos: Como Doar / Contato -->
+<div id="comoDoarModal" class="modal info-modal" role="dialog" aria-hidden="true" style="display:none;position:fixed;inset:0;background-color:rgba(0,0,0,0.65);z-index:99999;justify-content:center;align-items:center;padding:20px;">
+  <div class="modal-content" style="background:#fff;color:#111;padding:22px;border-radius:12px;max-width:760px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.2);text-align:center;position:relative;z-index:100000;max-height:90vh;overflow:auto;">
+    <span class="close-modal" data-close="comoDoarModal" style="position:absolute;top:12px;right:16px;font-size:28px;cursor:pointer;color:#333;">&times;</span>
+    <h2 class="modal-title">Como Doar - Informações Rápidas</h2>
+    <div class="modal-body">
+      <p style="text-align:center; white-space:pre-wrap;">Como Doar - Informações Rápidas
+Para fazer uma doação, é necessário fazer um cadastro no site com seus dados. Após o cadastro, será redirecionado ao início do site. Lá terá um botão de fazer doação; ao clicar, será redirecionado para a parte de doações. Desça um pouco e clique em cadastrar um endereço, preencha seus dados e volte em (Fazer doação), localizada no painel lateral. Lá adicione no mínimo 3 itens de cada coisa, como "camisas, acessórios, sapatos" de sua preferência, e antes de fazer sua doação, abaixo de onde mostra seu endereço, terá um campo para adicionar seu endereço. Clique e coloque uma data desejada para a coleta, solicite a doação e preencha o tamanho e tipo de roupa que irá doar.
+
+ATENÇÃO: NÃO FAÇA DOAÇÕES DE ITENS ILEGAIS; CASO SEJAM FEITAS, SEUS DADOS SERÃO ENCAMINHADOS PARA A SEDE DA POLÍCIA!
+
+LEIA OS TERMOS DE SERVIÇO DO USUÁRIO E DO SITE ANTES DE DOAR!
+
+CASO QUEIRA, PODE DEIXAR SUA COLETA COM A CASA VIZINHA, MAS NÃO PREENCHA O ENDEREÇO DE SEU VIZINHO EM SUA CONTA!
+
+EM CASO DE COLETA MAL SUCEDIDA, SERÁ CANCELADA APÓS 2 TENTATIVAS DE BUSCA!
+
+EM CASO DE SPAM EM COLETA, SUA CONTA PODERÁ SER BANIDA OU SILENCIADA.</p>
+    </div>
+  </div>
+</div>
+
+<div id="contatoModal" class="modal info-modal" role="dialog" aria-hidden="true" style="display:none;position:fixed;inset:0;background-color:rgba(0,0,0,0.65);z-index:99999;justify-content:center;align-items:center;padding:20px;">
+  <div class="modal-content" style="background:#fff;color:#111;padding:22px;border-radius:12px;max-width:760px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.2);text-align:center;position:relative;z-index:100000;max-height:90vh;overflow:auto;">
+    <span class="close-modal" data-close="contatoModal" style="position:absolute;top:12px;right:16px;font-size:28px;cursor:pointer;color:#333;">&times;</span>
+    <h2 class="modal-title">REvest Contatos</h2>
+    <div class="modal-body">
+      <p style="text-align:center; white-space:pre-wrap;">REvest Contatos
+Gmail e email: REvest@gmail.com
+telefone e whatsapp: +55 16993405190
+instagram: REvest_doaqui</p>
+    </div>
 </div>
 </div>
 </div>
@@ -181,8 +219,8 @@
 <span class="close-modal">×</span>
 <h2 class="modal-title">Criar Conta</h2>
 <form action="/register" id="registerForm" method="POST">
-                {% if error %}
-                <div class="alert alert-danger">{{ error }}</div>
+                {% if register_error %}
+                <div class="alert alert-danger">{{ register_error }}</div>
                 {% endif %}
                 <div class="form-group">
 <label for="fullName">Nome Completo</label>
@@ -198,8 +236,8 @@
 </div>
 <div class="form-row">
     <div class="form-group">
-        <label for="cep">CEP</label>
-        <input class="form-control" id="cep" name="cep" required type="text"/>
+      <label for="cep">CEP</label>
+      <input class="form-control" id="cep" name="cep" required type="text" maxlength="9" pattern="\d{5}-?\d{3}" title="8 dígitos (com ou sem hífen)"/>
     </div>
     <div class="form-group">
         <label for="numero">Número</label>
@@ -217,21 +255,180 @@
 <button class="btn btn-primary btn-block" type="submit">Cadastrar</button>
 </form>
 <div class="form-footer">
-<p>Já tem uma conta? <a href="#" id="showLogin">Fazer Login</a></p>
+<p>Já tem uma conta? <a href="javascript:void(0)" id="showLogin">Fazer Login</a></p>
 </div>
 </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // If backend requested opening a specific tab after validation, trigger it
+  try {
+    var active = "{{ active_tab|default('') }}";
+    if (active === 'login') {
+      var btn = document.getElementById('loginBtn');
+      if (btn) btn.click();
+    } else if (active === 'register') {
+      var show = document.getElementById('showRegister');
+      if (show) show.click();
+    }
+  } catch (e) {}
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  function getScrollbarWidth() {
+    return window.innerWidth - document.documentElement.clientWidth;
+  }
+  function openModal(id) {
+    var m = document.getElementById(id);
+    if (!m) return;
+    // Prevent layout shift by compensating for missing scrollbar
+    var sb = getScrollbarWidth();
+    if (sb > 0) document.body.style.paddingRight = sb + 'px';
+    m.style.display = 'flex';
+    m.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    var m = document.getElementById(id);
+    if (!m) return;
+    m.style.display = 'none';
+    m.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+  }
+
+  var comoBtn = document.getElementById('comoDoarBtn');
+  var contatoBtn = document.getElementById('contatoBtn');
+  var inicioBtn = document.getElementById('inicioBtn');
+
+  if (comoBtn) {
+    comoBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      // debug banner to confirm click reached JS
+      createDebugBanner('Como Doar clicked');
+      openModal('comoDoarModal');
+      // fallback: if modal not visible after opening, create a forced overlay
+      setTimeout(function(){
+        var m = document.getElementById('comoDoarModal');
+        var visible = m && (window.getComputedStyle(m).display === 'flex');
+        if (!visible) {
+          if (!visible) {
+            if (window.showInfoPanel) {
+              window.showInfoPanel('comoDoarPanel', 'Como Doar - Informações Rápidas', `Para fazer uma doação, é necessário fazer um cadastro no site com seus dados. Após o cadastro, será redirecionado ao início do site. Lá terá um botão de fazer doação; ao clicar, será redirecionado para a parte de doações. Desça um pouco e clique em cadastrar um endereço, preencha seus dados e volte em (Fazer doação), localizada no painel lateral. Lá adicione no mínimo 3 itens de cada coisa, como "camisas, acessórios, sapatos" de sua preferência, e antes de fazer sua doação, abaixo de onde mostra seu endereço, terá um campo para adicionar seu endereço. Clique e coloque uma data desejada para a coleta, solicite a doação e preencha o tamanho e tipo de roupa que irá doar.\n\nATENÇÃO: NÃO FAÇA DOAÇÕES DE ITENS ILEGAIS; CASO SEJAM FEITAS, SEUS DADOS SERÃO ENCAMINHADOS PARA A SEDE DA POLÍCIA!\n\nLEIA OS TERMOS DE SERVIÇO DO USUÁRIO E DO SITE ANTES DE DOAR!\n\nCASO QUEIRA, PODE DEIXAR SUA COLETA COM A CASA VIZINHA, MAS NÃO PREENCHA O ENDEREÇO DE SEU VIZINHO EM SUA CONTA!\n\nEM CASO DE COLETA MAL SUCEDIDA, SERÁ CANCELADA APÓS 2 TENTATIVAS DE BUSCA!\n\nEM CASO DE SPAM EM COLETA, SUA CONTA PODERÁ SER BANIDA OU SILENCIADA.`);
+            } else {
+              createFallbackOverlay('comoDoarModalFallback', 'Como Doar - Informações Rápidas', 'Para fazer uma doação, verifique o site.');
+            }
+          }
+        if (!visible) {
+          if (window.showInfoPanel) {
+            window.showInfoPanel('contatoPanel', 'REvest Contatos', 'Gmail e email: REvest@gmail.com\ntelefone e whatsapp: +55 16993405190\ninstagram: REvest_doaqui');
+          } else {
+            createFallbackOverlay('contatoModalFallback', 'REvest Contatos', 'REvest@gmail.com');
+          }
+        }
+      }, 120);
+    });
+  }
+  if (inicioBtn) {
+    inicioBtn.addEventListener('click', function(e) {
+      if (window.location.pathname === '/' || window.location.pathname.endsWith('index')) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  }
+
+  // close buttons
+  document.querySelectorAll('.close-modal').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var id = this.getAttribute('data-close');
+      closeModal(id);
+    });
+  });
+
+  // close on overlay click
+  document.querySelectorAll('.modal').forEach(function(modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  // close on Esc
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal').forEach(function(m) {
+        m.style.display = 'none';
+        m.setAttribute('aria-hidden', 'true');
+      });
+      document.body.style.overflow = '';
+    }
+  });
+});
+
+// Fallback overlay creator (appends to body)
+function createFallbackOverlay(id, title, text) {
+  if (document.getElementById(id)) return;
+  var overlay = document.createElement('div');
+  overlay.id = id;
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.65);display:flex;align-items:center;justify-content:center;z-index:2147483646;padding:20px;';
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;color:#111;padding:22px;border-radius:12px;max-width:760px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.2);text-align:center;position:relative;max-height:90vh;overflow:auto;';
+
+  var closeBtn = document.createElement('button');
+  closeBtn.innerHTML = '×';
+  closeBtn.style.cssText = 'position:absolute;top:12px;right:16px;font-size:28px;border:none;background:transparent;cursor:pointer;color:#333;';
+  closeBtn.addEventListener('click', function(){ document.body.removeChild(overlay); document.body.style.overflow = ''; document.body.style.paddingRight = ''; });
+
+  var h = document.createElement('h2'); h.textContent = title; h.style.marginTop = '6px'; h.style.color = '#2c3e50';
+  var p = document.createElement('p'); p.style.whiteSpace = 'pre-wrap'; p.style.textAlign = 'center'; p.style.marginTop = '8px'; p.textContent = text;
+
+  box.appendChild(closeBtn);
+  box.appendChild(h);
+  box.appendChild(p);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+}
+
+// Small debug banner creator (auto-removes after 2s)
+function createDebugBanner(msg) {
+  try {
+    var b = document.createElement('div');
+    b.textContent = msg;
+    b.style.cssText = 'position:fixed;top:12px;left:50%;transform:translateX(-50%);background:limegreen;color:#000;padding:8px 12px;border-radius:6px;z-index:2147483647;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.2)';
+    document.body.appendChild(b);
+    setTimeout(function(){ try{ document.body.removeChild(b); }catch(e){} }, 2000);
+  } catch (e) { console.error('debug banner error', e); }
+}
+</script>
+
 <!-- Navegação: proteção contra back/forward e botões laterais do mouse -->
 <script>
 (function () {
-  try {
+    try {
     history.pushState({preventBack: true}, document.title, location.href);
     window.addEventListener('popstate', function (e) {
+      var el = document.getElementById('__nav_block_toast');
+      if (window.__suppressNavToast) {
+        window.__suppressNavToast = false;
+        if (el) { el.dataset.suppress = 'false'; }
+        return;
+      }
+      if (el && el.dataset && el.dataset.suppress === 'true') {
+        el.dataset.suppress = 'false';
+        return;
+      }
       history.pushState({preventBack: true}, document.title, location.href);
-      const el = document.getElementById('__nav_block_toast');
       if (el) {
         el.style.display = 'block';
         clearTimeout(el.__t);
@@ -272,6 +469,225 @@
   }
 })();
 </script>
+
+
+<!-- MODAL COMO DOAR -->
+<div id="modalComoDoar" class="modal info-modal">
+  <div class="modal-content"><span class="close" data-target="modalComoDoar">&times;</span>
+<h2>Como Doar - Informações Rápidas</h2>
+<ol>
+<li><b>Cadastro Inicial</b>
+  <ul>
+    <li>Faça seu cadastro no site com seus dados.</li>
+    <li>Após o cadastro, você será redirecionado para o início do site.</li>
+  </ul>
+</li>
+<li><b>Acessar a Área de Doações</b>
+  <ul>
+    <li>Clique no botão <b>“Fazer Doação”</b>.</li>
+    <li>Você será direcionado para a seção de doações.</li>
+  </ul>
+</li>
+<li><b>Cadastrar Endereço</b>
+  <ul>
+    <li>Desça um pouco e clique em “Cadastrar um Endereço”.</li>
+    <li>Preencha seus dados corretamente.</li>
+  </ul>
+</li>
+<li><b>Adicionar Itens para Doação</b>
+  <ul>
+    <li>Volte para “Fazer Doação”.</li>
+    <li>Adicione no mínimo 3 itens de cada categoria <br>(camisas, acessórios, sapatos).</li>
+  </ul>
+</li>
+<li><b>Agendar Coleta</b>
+  <ul>
+    <li>Escolha data desejada no campo abaixo do endereço.</li>
+    <li>Solicite a doação e informe tamanho/tipo das roupas.</li>
+  </ul>
+</li>
+</ol>
+<h3>⚠️ ATENÇÃO – REGRAS</h3>
+<ul>
+<li>Não doe itens ilegais. Dados serão enviados à polícia.</li>
+<li>Leia os Termos de Serviço antes de doar.</li>
+<li>Pode deixar coleta com vizinho, mas não use endereço dele.</li>
+<li>Coleta mal sucedida será cancelada após 2 tentativas.</li>
+<li>Spam em coleta pode resultar em banimento.</li>
+</ul>
+<b>Obrigado por sua doação! ♻️</b>
+</div>
+</div>
+
+<!-- MODAL CONTATO -->
+<div id="modalContato" class="modal info-modal">
+  <div class="modal-content">
+    <span class="close" data-target="modalContato">&times;</span>
+    <pre>REvest contatos
+Gmail e email: REvest@gmail.com
+Telefone e whatsapp: +55 16993405190
+Instagram: REvest_doaqui</pre>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  function openModal(id) {
+    const m = document.getElementById(id);
+    if (m) m.style.display = "flex";
+  }
+  function closeModal(id) {
+    const m = document.getElementById(id);
+    if (m) m.style.display = "none";
+  }
+
+  document.getElementById("comoDoarBtn")?.addEventListener("click", () => openModal("modalComoDoar"));
+  document.getElementById("contatoBtn")?.addEventListener("click", () => openModal("modalContato"));
+
+  document.querySelectorAll(".close").forEach(el => {
+    el.addEventListener("click", () => closeModal(el.dataset.target));
+  });
+
+  window.onclick = function(e) {
+    if (e.target.classList.contains("modal")) closeModal(e.target.id);
+  };
+});
+</script>
+
+<style>
+
+.info-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+.info-modal .modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  text-align: left;
+  line-height: 1.6;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  animation: scaleUp 0.3s ease-in-out forwards;
+}
+.info-modal .close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 22px;
+  cursor: pointer;
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes scaleUp {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.info-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.info-modal .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  white-space: pre-wrap;
+}
+.info-modal .close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 24px;
+  cursor: pointer;
+}
+</style>
+
+<!-- MODAL SAIBA MAIS -->
+<div id="modalSaibaMais" class="modal info-modal">
+  <div class="modal-content">
+    <span class="close" data-target="modalSaibaMais">&times;</span>
+    <h2>Sobre a REvest</h2>
+    <p>A REvest é um site de doações de roupas com o objetivo de aumentar as arrecadações de roupas de forma fácil e rápida.</p>
+    <p>Nosso objetivo é ser um site básico e fácil de entrar, doar e sair, ajudando a coletar o máximo de doações de forma rápida e online.</p>
+    <p>Mas você deve se perguntar o que nosso site tem que os demais não têm.</p>
+    <p>Nosso site pode ser operado por qualquer um que tenha uma caridade ou instituição; isso significa que uma igreja pode operar nosso site, ou você mesmo.</p>
+    <p>Venha nos ajudar a REvestir mais pessoas e mover o mundo de forma ecológica e caridosa. Venha ser um REvest!</p>
+    <p><b><p><b>(ATUALMENTE O SITE SÓ ATUA EM SÃO CARLOS, SP, COM AUTORIZAÇÃO)</b></p></b></p>
+    <p><b><p><b>(COLETAS ATÉ EM RIBEIRÃO PRETO COM ATÉ 6 ITENS NO MÍNIMO)</b></p></b></p>
+    <p><b><p><b>(LEIA OS TERMOS DE SERVIÇO)</b></p></b></p>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("saibaMaisBtn")?.addEventListener("click", () => {
+    document.getElementById("modalSaibaMais").style.display="flex";
+  });
+});
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const fd = document.getElementById("footerComoDoar");
+  const fs = document.getElementById("footerSobre");
+  const fc = document.getElementById("footerContato");
+
+  if (fd) {
+    fd.style.cursor = "pointer";
+    fd.addEventListener("click", (e) => {
+      e.preventDefault();
+      const m = document.getElementById("modalComoDoar");
+      if (m) m.style.display = "flex";
+    });
+  }
+
+  if (fs) {
+    fs.style.cursor = "pointer";
+    fs.addEventListener("click", (e) => {
+      e.preventDefault();
+      const m = document.getElementById("modalSaibaMais");
+      if (m) m.style.display = "flex";
+    });
+  }
+
+  if (fc) {
+    fc.style.cursor = "pointer";
+    fc.addEventListener("click", (e) => {
+      e.preventDefault();
+      const m = document.getElementById("modalContato");
+      if (m) m.style.display = "flex";
+    });
+  }
+});
+</script>
+
 
 </body>
 </html>

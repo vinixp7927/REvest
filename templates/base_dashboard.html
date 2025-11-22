@@ -8,17 +8,20 @@
     <!-- CSS Base do Dashboard -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base_dashboard.css') }}">
 
+    <!-- CSS Global -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
     <!-- CSS Específico da Página -->
     {% block page_css %}{% endblock %}
+
+    <!-- Mobile-first overrides for dashboard (post-login) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile_dashboard.css') }}">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-
-    <link rel="stylesheet" href="/static/css/base_dashboard.css">
-    <link rel="stylesheet" href="/static/css/base.css">
 </head>
 <body>
 
@@ -78,8 +81,17 @@
   try {
     history.pushState({preventBack: true}, document.title, location.href);
     window.addEventListener('popstate', function (e) {
+      var el = document.getElementById('__nav_block_toast');
+      if (window.__suppressNavToast) {
+        window.__suppressNavToast = false;
+        if (el) { el.dataset.suppress = 'false'; }
+        return;
+      }
+      if (el && el.dataset && el.dataset.suppress === 'true') {
+        el.dataset.suppress = 'false';
+        return;
+      }
       history.pushState({preventBack: true}, document.title, location.href);
-      const el = document.getElementById('__nav_block_toast');
       if (el) {
         el.style.display = 'block';
         clearTimeout(el.__t);
@@ -119,6 +131,58 @@
     console.error('Nav-protection error:', err);
   }
 })();
+</script>
+
+<!-- Mobile header compact toggler: add class to body when viewport is small -->
+<script>
+  (function () {
+    function applyCompactHeader() {
+      try {
+        var w = window.innerWidth || document.documentElement.clientWidth;
+        var h = window.innerHeight || document.documentElement.clientHeight;
+        var isLandscape = w > h;
+        // If landscape: use height threshold (<=420). If portrait: use width threshold (<=420).
+        var isMobileSize = isLandscape ? (h <= 420) : (w <= 420);
+        if (isMobileSize) document.body.classList.add('mobile-header-compact');
+        else document.body.classList.remove('mobile-header-compact');
+
+        /* JS fallback: apply inline styles to account menu trigger when mobile compact
+           This ensures the position is applied even if other CSS rules with !important
+           override external styles. We set style attribute directly (including !important)
+           and remove it when not in mobile mode. */
+        try {
+          var accCont = document.querySelector('.account-menu-container') || document.querySelector('.account-menu-trigger');
+          if (accCont) {
+            if (isMobileSize) {
+              // apply inline style with !important to guarantee precedence
+              // descend 38px (30 + 8) to satisfy the latest request
+              accCont.setAttribute('style', 'position: absolute; right: 35px !important; left: auto !important; top: 50% !important; transform: translateY(-50%) translateY(38px) !important; z-index: 1001 !important;');
+            } else {
+              // remove inline styles we applied so desktop styles take over
+              // remove only if it contains the mobile fallback we applied to avoid clobbering other inline styles
+              var current = accCont.getAttribute('style') || '';
+              if (current.indexOf('right: 35px') !== -1 && current.indexOf('translateY(38px)') !== -1) {
+                accCont.removeAttribute('style');
+              }
+            }
+          }
+        } catch (e) {
+          console.error('account fallback positioning error', e);
+        }
+      } catch (err) {
+        console.error('applyCompactHeader error', err);
+      }
+    }
+
+    // Run on load, resize and orientation change (debounced on resize)
+    window.addEventListener('load', applyCompactHeader);
+    var __compactResizeT = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(__compactResizeT);
+      __compactResizeT = setTimeout(applyCompactHeader, 120);
+    });
+    window.addEventListener('orientationchange', applyCompactHeader);
+  })();
 </script>
 
 </body>

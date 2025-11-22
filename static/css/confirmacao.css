@@ -1,3 +1,30 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 0; /* Tamanho do header (copiado de fazer doações) */
+    position: relative;
+}
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: absolute;
+    left: -280px; /* posição horizontal da logo (copiado de fazer doações) */
+    top: 50%;
+    transform: translateY(-50%);
+}
+.logo img {
+    height: 40px; /* altura da logo (copiado de fazer doações) */
+    width: auto;
+    transition: transform 0.3s;
+}
+.auth-buttons {
+    position: absolute;
+    right: -260px; /* posição horizontal dos botões de conta (copiado de fazer doações) */
+    top: 50%;
+    transform: translateY(-50%);
+}
 .container {
     width: 100%;
     max-width: 1200px;

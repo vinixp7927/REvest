@@ -1,0 +1,32 @@
+@media (min-width: 1201px) {
+    header .navbar {
+        padding: 25px 0;
+    }
+
+    .logo-container {
+        position: absolute;
+        left: -280px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .logo img {
+        height: 40px;
+    }
+
+    .auth-buttons {
+        position: absolute;
+        right: -260px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1000;
+    }
+
+    .account-menu-container {
+        position: absolute;
+        top: -3px;
+        right: -25px;
+        z-index: 999;
+        display: inline-block;
+    }
+}

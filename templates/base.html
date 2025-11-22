@@ -30,9 +30,9 @@
                         </a>
                     </div>
                     <ul class="nav-links">
-                        <li><a href="/">Início</a></li>
-                        <li><a href="#">Como Doar</a></li>
-                        <li><a href="#">Contato</a></li>
+                        <li><a href="/" id="inicioBtn">Início</a></li>
+                        <li><a href="javascript:void(0)" id="comoDoarBtn" role="button">Como Doar</a></li>
+                        <li><a href="javascript:void(0)" id="contatoBtn" role="button">Contato</a></li>
                     </ul>
                 </div>
                 <div class="auth-buttons" style="display: flex; align-items: center; justify-content: flex-end; height: 70px;">
@@ -48,7 +48,7 @@
                                 <ul>
                                     <li style="font-weight:600;color:var(--primary);padding-bottom:4px;">Detalhes da Conta</li>
                                     <li>
-                                        <a href="#" id="editAccountBtn" style="color:var(--primary);font-size:13px;">Editar Conta</a>
+                                        <a href="javascript:void(0)" id="editAccountBtn" style="color:var(--primary);font-size:13px;">Editar Conta</a>
                                         <div id="editAccountForm" style="display:none; margin-top:10px;">
                                             <form method="POST" action="/conta/editar" style="display:flex;flex-direction:column;gap:8px;">
                                                 <label for="editNome" style="font-size:13px;">Nome:</label>
@@ -56,7 +56,7 @@
                                                 <label for="editCPF" style="font-size:13px;">CPF:</label>
                                                 <input type="text" id="editCPF" name="cpf" value="{{ session.cpf }}" required style="padding:4px;">
                                                 <label for="editCEP" style="font-size:13px;">CEP:</label>
-                                                <input type="text" id="editCEP" name="cep" value="{{ session.cep }}" required style="padding:4px;">
+                                                <input type="text" id="editCEP" name="cep" value="{{ session.cep }}" required maxlength="9" pattern="\d{5}-?\d{3}" title="8 dígitos (com ou sem hífen)" style="padding:4px;">
                                                 <button type="submit" style="background:var(--primary);color:#fff;border:none;padding:6px 12px;border-radius:4px;">Salvar Alterações</button>
                                             </form>
                                         </div>
@@ -70,7 +70,7 @@
                                     </li>
                                     <li><a href="/enderecos">Endereços</a></li>
                                     <li>
-                                        <a href="#" id="editAddressBtn" style="color:var(--primary);font-size:13px;">Editar Endereço Principal</a>
+                                        <a href="javascript:void(0)" id="editAddressBtn" style="color:var(--primary);font-size:13px;">Editar Endereço Principal</a>
                                         <div id="editAddressForm" style="display:none; margin-top:10px;">
                                             <form method="POST" action="/conta/endereco" style="display:flex;flex-direction:column;gap:8px;">
                                                 <label for="rua" style="font-size:13px;">Rua:</label>
@@ -84,14 +84,14 @@
                                                 <label for="estado" style="font-size:13px;">Estado:</label>
                                                 <input type="text" id="estado" name="estado" value="" required style="padding:4px;">
                                                 <label for="cep" style="font-size:13px;">CEP:</label>
-                                                <input type="text" id="cep" name="cep" value="" required style="padding:4px;">
+                                                <input type="text" id="cep" name="cep" value="" required maxlength="9" pattern="\d{5}-?\d{3}" title="8 dígitos (com ou sem hífen)" style="padding:4px;">
                                                 <button type="submit" style="background:var(--primary);color:#fff;border:none;padding:6px 12px;border-radius:4px;">Salvar Endereço</button>
                                             </form>
                                         </div>
                                     </li>
                                     <li><a href="/conta/suporte">Suporte</a></li>
                                     <li>
-                                        <a href="#" id="supportBtn" style="color:var(--primary);font-size:13px;">Suporte</a>
+                                        <a href="javascript:void(0)" id="supportBtn" style="color:var(--primary);font-size:13px;">Suporte</a>
                                         <div id="supportForm" style="display:none; margin-top:10px;">
                                             <form method="POST" action="/conta/suporte" style="display:flex;flex-direction:column;gap:8px;">
                                                 <label for="supportMsg" style="font-size:13px;">Mensagem para o suporte:</label>
@@ -101,7 +101,7 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <a href="#" style="color:var(--danger);" id="deleteAccountBtn">Deletar Conta</a>
+                                        <a href="javascript:void(0)" style="color:var(--danger);" id="deleteAccountBtn">Deletar Conta</a>
                                         <div id="deleteAccountForm" style="display:none; margin-top:10px;">
                                             {% with messages = get_flashed_messages(with_categories=true) %}
                                                 {% if messages %}
@@ -141,6 +141,30 @@
     {% block content %}
     {% endblock %}
 
+    <!-- Modais informativos -->
+    <div id="comoDoarModal" class="modal info-modal" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close-modal" data-close="comoDoarModal">&times;</span>
+            <h2 class="modal-title">Como Doar - Informações Rápidas</h2>
+            <div class="modal-body">
+                <p style="text-align:center; white-space:pre-wrap;">Para fazer uma doação, é necessário fazer um cadastro no site com seus dados. Após o cadastro, será redirecionado ao início do site. Lá terá um botão de fazer doação; ao clicar, será redirecionado para a parte de doações. Desça um pouco e clique em cadastrar um endereço, preencha seus dados e volte em (Fazer doação), localizada no painel lateral. Lá adicione no mínimo 3 itens de cada coisa, como "camisas, acessórios, sapatos" de sua preferência, e antes de fazer sua doação, abaixo de onde mostra seu endereço, terá um campo para adicionar seu endereço. Clique e coloque uma data desejada para a coleta, solicite a doação e preencha o tamanho e tipo de roupa que irá doar.\n\nATENÇÃO: NÃO FAÇA DOAÇÕES DE ITENS ILEGAIS; CASO SEJAM FEITAS, SEUS DADOS SERÃO ENCAMINHADOS PARA A SEDE DA POLÍCIA!\n\nLEIA OS TERMOS DE SERVIÇO DO USUÁRIO E DO SITE ANTES DE DOAR!\n\nCASO QUEIRA, PODE DEIXAR SUA COLETA COM A CASA VIZINHA, MAS NÃO PREENCHA O ENDEREÇO DE SEU VIZINHO EM SUA CONTA!\n\nEM CASO DE COLETA MAL SUCEDIDA, SERÁ CANCELADA APÓS 2 TENTATIVAS DE BUSCA!\n\nEM CASO DE SPAM EM COLETA, SUA CONTA PODERÁ SER BANIDA OU SILENCIADA.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="contatoModal" class="modal info-modal" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <span class="close-modal" data-close="contatoModal">&times;</span>
+            <h2 class="modal-title">REvest Contatos</h2>
+            <div class="modal-body">
+                <p style="text-align:center; white-space:pre-wrap;">REvest Contatos
+Gmail e email: REvest@gmail.com
+telefone e whatsapp: +55 16993405190
+instagram: REvest_doaqui</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -149,29 +173,29 @@
                     <img src="/static/img/logo.png" alt="REvest Logo" style="height: 50px; margin-bottom: 15px;">
                     <p>Conectando doadores a quem precisa, transformando roupas em esperança.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="javascript:void(0)"><i class="fab fa-facebook-f"></i></a>
+                        <a href="javascript:void(0)"><i class="fab fa-instagram"></i></a>
+                        <a href="javascript:void(0)"><i class="fab fa-twitter"></i></a>
+                        <a href="javascript:void(0)"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
                 <div class="footer-column">
                     <h3>Links Rápidos</h3>
                     <ul class="footer-links">
                         <li><a href="/">Início</a></li>
-                        <li><a href="#">Como Doar</a></li>
-                        <li><a href="#">Sobre Nós</a></li>
-                        <li><a href="#">Contato</a></li>
-                        <li><a href="#">Termos de Uso</a></li>
+                        <li><a href="javascript:void(0)">Como Doar</a></li>
+                        <li><a href="javascript:void(0)">Sobre Nós</a></li>
+                        <li><a href="javascript:void(0)">Contato</a></li>
+                        <li><a href="javascript:void(0)">Termos de Uso</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
                     <h3>Nossos Parceiros</h3>
                     <ul class="footer-links">
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
+                        <li><a href="javascript:void(0)"></a></li>
+                        <li><a href="javascript:void(0)"></a></li>
+                        <li><a href="javascript:void(0)"></a></li>
+                        <li><a href="javascript:void(0)"></a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -254,17 +278,31 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Navegação: proteção contra back/forward e botões laterais do mouse -->
 <script>
 (function () {
-  try {
-    history.pushState({preventBack: true}, document.title, location.href);
-    window.addEventListener('popstate', function (e) {
-      history.pushState({preventBack: true}, document.title, location.href);
-      const el = document.getElementById('__nav_block_toast');
-      if (el) {
-        el.style.display = 'block';
-        clearTimeout(el.__t);
-        el.__t = setTimeout(() => el.style.display = 'none', 1800);
-      }
-    });
+    try {
+        history.pushState({preventBack: true}, document.title, location.href);
+        window.addEventListener('popstate', function (e) {
+            // If a piece of code intentionally suppressed the nav-toast (e.g. opening modals),
+            // don't show the toast. This avoids the 'histórico desabilitado' message when
+            // users click header links that are handled by JS.
+            var el = document.getElementById('__nav_block_toast');
+            if (window.__suppressNavToast) {
+                window.__suppressNavToast = false;
+                if (el) { el.dataset.suppress = 'false'; }
+                return;
+            }
+            // If the toast element itself has a suppression flag, respect it.
+            if (el && el.dataset && el.dataset.suppress === 'true') {
+                // clear the suppression after honoring it
+                el.dataset.suppress = 'false';
+                return;
+            }
+            history.pushState({preventBack: true}, document.title, location.href);
+            if (el) {
+                el.style.display = 'block';
+                clearTimeout(el.__t);
+                el.__t = setTimeout(() => el.style.display = 'none', 1800);
+            }
+        });
     window.addEventListener('auxclick', function (e) {
       if (e.button === 3 || e.button === 4) {
         e.preventDefault();
@@ -298,6 +336,117 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('Nav-protection error:', err);
   }
 })();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function openModal(id) {
+        var m = document.getElementById(id);
+        if (!m) return;
+        m.style.display = 'flex';
+        m.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+        var m = document.getElementById(id);
+        if (!m) return;
+        m.style.display = 'none';
+        m.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    var comoBtn = document.getElementById('comoDoarBtn');
+    var contatoBtn = document.getElementById('contatoBtn');
+    var inicioBtn = document.getElementById('inicioBtn');
+
+    function suppressToastImmediate(duration){
+        var el = document.getElementById('__nav_block_toast');
+        try{
+            window.__suppressNavToast = true;
+        }catch(e){ }
+        if (el) {
+            el.dataset.suppress = 'true';
+            el.style.display = 'none';
+            clearTimeout(el.__t);
+            el.__t = setTimeout(function(){ el.dataset.suppress = 'false'; el.style.display = 'none'; }, duration || 900);
+        }
+        setTimeout(function(){ window.__suppressNavToast = false; }, duration || 900);
+    }
+
+    if (comoBtn) {
+        comoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            suppressToastImmediate(1000);
+            openModal('comoDoarModal');
+            setTimeout(function(){
+                var m = document.getElementById('comoDoarModal');
+                var visible = m && (window.getComputedStyle(m).display === 'flex');
+                if (!visible) {
+                    if (window.showInfoPanel) {
+                        window.showInfoPanel('comoDoarPanel', 'Como Doar - Informações Rápidas', `Para fazer uma doação, é necessário fazer um cadastro no site com seus dados. Após o cadastro, será redirecionado ao início do site. Lá terá um botão de fazer doação; ao clicar, será redirecionado para a parte de doações. Desça um pouco e clique em cadastrar um endereço, preencha seus dados e volte em (Fazer doação), localizada no painel lateral. Lá adicione no mínimo 3 itens de cada coisa, como "camisas, acessórios, sapatos" de sua preferência, e antes de fazer sua doação, abaixo de onde mostra seu endereço, terá um campo para adicionar seu endereço. Clique e coloque uma data desejada para a coleta, solicite a doação e preencha o tamanho e tipo de roupa que irá doar.\n\nATENÇÃO: NÃO FAÇA DOAÇÕES DE ITENS ILEGAIS; CASO SEJAM FEITAS, SEUS DADOS SERÃO ENCAMINHADOS PARA A SEDE DA POLÍCIA!\n\nLEIA OS TERMOS DE SERVIÇO DO USUÁRIO E DO SITE ANTES DE DOAR!\n\nCASO QUEIRA, PODE DEIXAR SUA COLETA COM A CASA VIZINHA, MAS NÃO PREENCHA O ENDEREÇO DE SEU VIZINHO EM SUA CONTA!\n\nEM CASO DE COLETA MAL SUCEDIDA, SERÁ CANCELADA APÓS 2 TENTATIVAS DE BUSCA!\n\nEM CASO DE SPAM EM COLETA, SUA CONTA PODERÁ SER BANIDA OU SILENCIADA.`);
+                    }
+                }
+            }, 120);
+        });
+    }
+    if (contatoBtn) {
+        contatoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            suppressToastImmediate(1000);
+            openModal('contatoModal');
+            setTimeout(function(){
+                var m = document.getElementById('contatoModal');
+                var visible = m && (window.getComputedStyle(m).display === 'flex');
+                if (!visible) {
+                    if (window.showInfoPanel) {
+                        window.showInfoPanel('contatoPanel', 'REvest Contatos', 'Gmail e email: REvest@gmail.com\ntelefone e whatsapp: +55 16993405190\ninstagram: REvest_doaqui');
+                    }
+                }
+            }, 120);
+        });
+    }
+    if (inicioBtn) {
+        inicioBtn.addEventListener('click', function(e) {
+            // default behaviour already goes to '/', keep it but ensure scroll-to-top for single-page
+            // If current page is index, scroll to top smoothly
+            if (window.location.pathname === '/' || window.location.pathname.endsWith('index')) {
+                e.preventDefault();
+                suppressToastImmediate(700);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
+
+    // close buttons
+    document.querySelectorAll('.close-modal').forEach(function(el) {
+        el.addEventListener('click', function() {
+            var id = this.getAttribute('data-close');
+            closeModal(id);
+        });
+    });
+
+    // close on overlay click
+    document.querySelectorAll('.modal').forEach(function(modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+        });
+    });
+
+    // close on Esc
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal').forEach(function(m) {
+                m.style.display = 'none';
+                m.setAttribute('aria-hidden', 'true');
+            });
+            document.body.style.overflow = '';
+        }
+    });
+});
 </script>
 
 </body>

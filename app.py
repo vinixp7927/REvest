@@ -62,7 +62,7 @@ def login():
             if valid:
                 # Verificar se usuário está banido
                 if user.is_banned:
-                    return render_template('index.html', error="Esta conta está banida")
+                    return render_template('index.html', login_error="Esta conta está banida", active_tab='login')
                 session['user'] = user.Email
                 session['name'] = user.Nome
                 session['role'] = user.role
@@ -83,10 +83,10 @@ def login():
                 session['role'] = 'admin'
                 session['user_id'] = admin.ID_Admin
                 return redirect(url_for('admin'))
-        return render_template('index.html', error="Credenciais inválidas")
+        return render_template('index.html', login_error="Credenciais inválidas", active_tab='login')
     except Exception as e:
         print(f"Erro no login: {e}")
-        return render_template('index.html', error="Erro interno no servidor")
+        return render_template('index.html', login_error="Erro interno no servidor", active_tab='login')
 
 def format_cpf(cpf_raw: str) -> str | None:
     """Formata o CPF para 000.000.000-00 e valida se tem 11 dígitos numéricos."""
@@ -98,6 +98,37 @@ def format_cpf(cpf_raw: str) -> str | None:
     return f"{digits[:3]}.{digits[3:6]}.{digits[6:9]}-{digits[9:]}"
 
 
+def sanitize_input(value: str | None, max_length: int = 2000) -> str:
+    """Remove caracteres de controle e limita tamanho para evitar payloads inesperados."""
+    if not value or not isinstance(value, str):
+        return ''
+    # remover caracteres não imprimíveis
+    cleaned = re.sub(r'[\x00-\x1f\x7f]', '', value)
+    return cleaned[:max_length]
+
+
+def normalize_cep(cep_raw: str | None) -> str | None:
+    """Remove tudo que não for dígito e garante exatamente 8 dígitos, caso contrário retorna None."""
+    if not cep_raw:
+        return None
+    digits = re.sub(r"\D", "", cep_raw)
+    return digits if len(digits) == 8 else None
+
+
+@app.before_request
+def block_muted_users_on_post():
+    """Bloqueia ações POST de usuários silenciados (exceto administradores)."""
+    try:
+        if request.method == 'POST' and 'user_id' in session:
+            uid = session.get('user_id')
+            user = Doador.query.get(uid)
+            if user and getattr(user, 'is_muted', False) and session.get('role') != 'admin':
+                return render_template('error.html', message='Você está silenciado e não pode realizar essa ação')
+    except Exception:
+        # Em caso de erro, não bloquear (evitar false positives que quebrem fluxo)
+        pass
+
+
 @app.route('/register', methods=['POST'])
 def register():
     try:
@@ -106,32 +137,33 @@ def register():
         password = request.form.get('regPassword', '').strip()
         confirm_password = request.form.get('confirmPassword', '').strip()
         cpf_input = request.form.get('cpf', '').strip()
-        cep = request.form.get('cep', '').strip() or None
+        cep_raw = request.form.get('cep', '').strip() or None
+        cep = normalize_cep(cep_raw)
         numero = request.form.get('numero', '').strip()
 
         # Campos obrigatórios: nome, email, senha, confirmação, CPF e número
         if not name or not email or not password or not confirm_password or not cpf_input or not numero:
-            return render_template('index.html', error="Todos os campos obrigatórios precisam ser preenchidos.")
+            return render_template('index.html', register_error="Todos os campos obrigatórios precisam ser preenchidos.")
 
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            return render_template('index.html', error="E-mail inválido.")
+            return render_template('index.html', register_error="E-mail inválido.")
 
         if len(password) < 6:
-            return render_template('index.html', error="A senha deve ter pelo menos 6 caracteres.")
+            return render_template('index.html', register_error="A senha deve ter pelo menos 6 caracteres.")
 
         if password != confirm_password:
-            return render_template('index.html', error="As senhas não coincidem.")
+            return render_template('index.html', register_error="As senhas não coincidem.")
 
         # Formatar e validar CPF
         cpf_formatado = format_cpf(cpf_input)
         if not cpf_formatado:
-            return render_template('index.html', error="CPF inválido. Use 11 dígitos numéricos.")
+            return render_template('index.html', register_error="CPF inválido. Use 11 dígitos numéricos.")
 
         # Verificar duplicidade de e-mail e CPF
         if Doador.query.filter_by(Email=email).first():
-            return render_template('index.html', error="E-mail já cadastrado.")
+            return render_template('index.html', register_error="E-mail já cadastrado.")
         if Doador.query.filter_by(CPF=cpf_formatado).first():
-            return render_template('index.html', error="CPF já cadastrado.")
+            return render_template('index.html', register_error="CPF já cadastrado.")
 
         # Armazenar senha com hash
         hashed = generate_password_hash(password)
@@ -157,7 +189,7 @@ def register():
     except Exception as e:
         print(f"Erro no registro: {e}")
         db.session.rollback()
-        return render_template('index.html', error="Erro interno no servidor")
+        return render_template('index.html', register_error="Erro interno no servidor")
 
 @app.route('/dashboard')
 
@@ -325,12 +357,18 @@ def add_address():
             # Remove default de outros endereços
             Endereco.query.filter_by(ID_Doador=user_id).update({'is_default': False})
         
+        cep_raw = request.form.get('cep', '').strip() or None
+        cep_clean = normalize_cep(cep_raw)
+        if cep_raw and not cep_clean:
+            flash('CEP inválido. Informe 8 dígitos numéricos.', 'danger')
+            return redirect(url_for('conta_endereco_get'))
+
         new_address = Endereco(
             ID_Doador=user_id,
             Tipo=request.form.get('type'),
             Rua=request.form.get('street'),
             Numero=request.form.get('number'),
-            CEP=request.form.get('cep'),
+            CEP=cep_clean,
             Bairro=request.form.get('neighborhood'),
             Cidade=request.form.get('city'),
             Estado=request.form.get('state'),
@@ -340,11 +378,11 @@ def add_address():
 
         db.session.add(new_address)
         db.session.commit()
-        return redirect(url_for('conta'))
+        return redirect(url_for('conta_endereco_get'))
     except Exception as e:
         print(f"Erro ao adicionar endereço: {e}")
         db.session.rollback()
-        return redirect(url_for('conta'))
+        return redirect(url_for('conta_endereco_get'))
 
 @app.route('/edit_address/<int:address_id>', methods=['GET', 'POST'])
 def edit_address(address_id):
@@ -355,7 +393,7 @@ def edit_address(address_id):
         address = Endereco.query.get_or_404(address_id)
         
         if address.ID_Doador != session['user_id']:
-            return redirect(url_for('conta'))
+            return redirect(url_for('conta_endereco_get'))
 
         if request.method == 'POST':
             if request.form.get('default') == 'on':
@@ -364,7 +402,13 @@ def edit_address(address_id):
             address.Tipo = request.form.get('type')
             address.Rua = request.form.get('street')
             address.Numero = request.form.get('number')
-            address.CEP = request.form.get('cep')
+            # normalize and validate cep
+            cep_raw = request.form.get('cep', '').strip() or None
+            cep_clean = normalize_cep(cep_raw)
+            if cep_raw and not cep_clean:
+                flash('CEP inválido. Informe 8 dígitos numéricos.', 'danger')
+                return redirect(url_for('edit_address', address_id=address_id))
+            address.CEP = cep_clean
             address.Bairro = request.form.get('neighborhood')
             address.Cidade = request.form.get('city')
             address.Estado = request.form.get('state')
@@ -372,12 +416,12 @@ def edit_address(address_id):
             address.is_default = request.form.get('default') == 'on'
 
             db.session.commit()
-            return redirect(url_for('conta'))
+            return redirect(url_for('conta_endereco_get'))
 
         return render_template('edit_address.html', address=address)
     except Exception as e:
         print(f"Erro ao editar endereço: {e}")
-        return redirect(url_for('conta'))
+        return redirect(url_for('conta_endereco_get'))
 
 @app.route('/delete_address/<int:address_id>')
 def delete_address(address_id):
@@ -391,10 +435,10 @@ def delete_address(address_id):
             db.session.delete(address)
             db.session.commit()
 
-        return redirect(url_for('conta'))
+        return redirect(url_for('conta_endereco_get'))
     except Exception as e:
         print(f"Erro ao deletar endereço: {e}")
-        return redirect(url_for('conta'))
+        return redirect(url_for('conta_endereco_get'))
 
 @app.route('/admin')
 def admin():
@@ -503,7 +547,7 @@ def limpar_historico():
         user_id = session['user_id']
         
         # Deletar todas as doações do usuário
-        Doacao.query.filter_by(ID_Doador=user_id).delete()
+        Doacao.query.filter_by(ID_Doador=user_id).delete(synchronize_session=False)
         db.session.commit()
         
         print(f"Histórico de doações limpo para usuário {user_id}")
@@ -528,8 +572,8 @@ def ticket():
 
     if request.method == 'POST':
         try:
-            subject = request.form.get('subject')
-            message = request.form.get('message')
+            subject = sanitize_input(request.form.get('subject'), max_length=200)
+            message = sanitize_input(request.form.get('message'), max_length=2000)
 
             if subject and message:
                 new_ticket = Ticket(
@@ -773,8 +817,11 @@ def promover_usuario():
     if 'user' not in session or session.get('role') != 'admin':
         return jsonify({'success': False, 'error': 'Não autorizado'})
     
-    data = request.get_json()
-    user_id = data.get('user_id')
+    data = request.get_json() or {}
+    try:
+        user_id = int(data.get('user_id'))
+    except Exception:
+        return jsonify({'success': False, 'error': 'user_id inválido'})
     new_role = data.get('new_role')
     
     user = Doador.query.get(user_id)
@@ -795,7 +842,10 @@ def banir_usuario():
     if 'user' not in session or session.get('role') != 'admin':
         return redirect(url_for('home'))
     
-    user_id = request.form.get('user_id')
+    try:
+        user_id = int(request.form.get('user_id'))
+    except Exception:
+        return redirect(url_for('moderacao'))
     ban_reason = request.form.get('ban_reason')
     
     user = Doador.query.get(user_id)
@@ -820,8 +870,11 @@ def desbanir_usuario():
     if 'user' not in session or session.get('role') != 'admin':
         return jsonify({'success': False, 'error': 'Não autorizado'})
     
-    data = request.get_json()
-    user_id = data.get('user_id')
+    data = request.get_json() or {}
+    try:
+        user_id = int(data.get('user_id'))
+    except Exception:
+        return jsonify({'success': False, 'error': 'user_id inválido'})
     
     user = Doador.query.get(user_id)
     if not user:
@@ -841,8 +894,11 @@ def silenciar_usuario():
     if 'user' not in session or session.get('role') != 'admin':
         return jsonify({'success': False, 'error': 'Não autorizado'})
     
-    data = request.get_json()
-    user_id = data.get('user_id')
+    data = request.get_json() or {}
+    try:
+        user_id = int(data.get('user_id'))
+    except Exception:
+        return jsonify({'success': False, 'error': 'user_id inválido'})
     
     user = Doador.query.get(user_id)
     if not user:
@@ -862,8 +918,11 @@ def dessilenciar_usuario():
     if 'user' not in session or session.get('role') != 'admin':
         return jsonify({'success': False, 'error': 'Não autorizado'})
     
-    data = request.get_json()
-    user_id = data.get('user_id')
+    data = request.get_json() or {}
+    try:
+        user_id = int(data.get('user_id'))
+    except Exception:
+        return jsonify({'success': False, 'error': 'user_id inválido'})
     
     user = Doador.query.get(user_id)
     if not user:
@@ -1179,7 +1238,7 @@ def responder_exclusao(solicitacao_id, acao):
             solicitacao.Status = 'aprovada'
             
             # Deletar histórico do usuário
-            Doacao.query.filter_by(ID_Doador=solicitacao.ID_Doador).delete()
+            Doacao.query.filter_by(ID_Doador=solicitacao.ID_Doador).delete(synchronize_session=False)
             
         else:  # rejeitar
             motivo = request.form.get('motivo', 'Solicitação rejeitada pelo administrador')
@@ -1330,7 +1389,8 @@ def editar_endereco():
     bairro = request.form.get('neighborhood')
     cidade = request.form.get('city')
     estado = request.form.get('state')
-    cep = request.form.get('cep')
+    cep_raw = request.form.get('cep')
+    cep = normalize_cep(cep_raw)
     complemento = request.form.get('complement')
 
     # Validação dos campos obrigatórios
@@ -1338,43 +1398,80 @@ def editar_endereco():
         flash('Preencha todos os campos obrigatórios do endereço.', 'danger')
         return redirect(url_for('conta_endereco_get'))
 
-    endereco = Endereco.query.filter_by(ID_Doador=user_id, is_default=True).first()
-    if endereco:
-        endereco.Tipo = tipo
-        endereco.Rua = rua
-        endereco.Numero = numero
-        endereco.Bairro = bairro
-        endereco.Cidade = cidade
-        # suportar redirecionamento de retorno (ex: ?next=/doacao)
+    # Se já existe um endereço padrão e o usuário NÃO marcou como padrão,
+    # isso significa que ele está adicionando um novo endereço (não quer sobrescrever o padrão).
+    is_default_flag = request.form.get('default') == 'on'
+    endereco_default = Endereco.query.filter_by(ID_Doador=user_id, is_default=True).first()
+
+    try:
+        if endereco_default and not is_default_flag:
+            # Criar novo endereço e NÃO alterar o padrão existente
+            novo = Endereco(
+                ID_Doador=user_id,
+                Tipo=tipo,
+                Rua=rua,
+                Numero=numero,
+                Bairro=bairro,
+                Cidade=cidade,
+                Estado=estado,
+                CEP=cep,
+                Complemento=complemento,
+                is_default=False
+            )
+            db.session.add(novo)
+            db.session.commit()
+            session['endereco'] = f"{rua}, {numero} - {bairro}, {cidade}/{estado}"
+            session['cep'] = cep
+            flash('Endereço adicionado com sucesso.', 'success')
+            next_url = request.args.get('next') or request.form.get('next')
+            if next_url and isinstance(next_url, str) and next_url.startswith('/'):
+                return redirect(next_url)
+            return redirect(url_for('conta_endereco_get'))
+
+        # Caso contrário: ou não havia padrão ainda, ou o usuário marcou como padrão -> atualizar/criar como padrão
+        if is_default_flag:
+            Endereco.query.filter_by(ID_Doador=user_id).update({'is_default': False})
+
+        if endereco_default and is_default_flag:
+            endereco = endereco_default
+            endereco.Tipo = tipo
+            endereco.Rua = rua
+            endereco.Numero = numero
+            endereco.CEP = cep
+            endereco.Bairro = bairro
+            endereco.Cidade = cidade
+            endereco.Estado = estado
+            endereco.Complemento = complemento
+            endereco.is_default = True
+        else:
+            # Criar novo endereço (será padrão apenas se is_default_flag for True)
+            endereco = Endereco(
+                ID_Doador=user_id,
+                Tipo=tipo,
+                Rua=rua,
+                Numero=numero,
+                Bairro=bairro,
+                Cidade=cidade,
+                Estado=estado,
+                CEP=cep,
+                Complemento=complemento,
+                is_default=is_default_flag
+            )
+            db.session.add(endereco)
+
+        db.session.commit()
+        session['endereco'] = f"{rua}, {numero} - {bairro}, {cidade}/{estado}"
+        session['cep'] = cep
+        flash('Endereço salvo com sucesso.', 'success')
         next_url = request.args.get('next') or request.form.get('next')
         if next_url and isinstance(next_url, str) and next_url.startswith('/'):
             return redirect(next_url)
-        return redirect(url_for('conta'))
-        endereco.CEP = cep
-        endereco.Complemento = complemento
-    else:
-        endereco = Endereco(
-            ID_Doador=user_id,
-            Tipo=tipo,
-            Rua=rua,
-            Numero=numero,
-            Bairro=bairro,
-            Cidade=cidade,
-            Estado=estado,
-            CEP=cep,
-            Complemento=complemento,
-            is_default=True
-        )
-        db.session.add(endereco)
-    db.session.commit()
-    session['endereco'] = f"{rua}, {numero} - {bairro}, {cidade}/{estado}"
-    session['cep'] = cep
-    flash('Endereço atualizado com sucesso.', 'success')
-    # Suportar redirecionamento condicional após salvar endereço (ex: voltar para /doacao)
-    next_url = request.args.get('next') or request.form.get('next')
-    if next_url and isinstance(next_url, str) and next_url.startswith('/'):
-        return redirect(next_url)
-    return redirect(url_for('dashboard'))
+        return redirect(url_for('conta_endereco_get'))
+    except Exception as e:
+        print(f"Erro ao salvar/atualizar endereço (editar_endereco): {e}")
+        db.session.rollback()
+        flash('Erro ao salvar endereço. Tente novamente.', 'danger')
+        return redirect(url_for('conta_endereco_get'))
 
 @app.route('/conta/deletar', methods=['POST'])
 def deletar_conta():

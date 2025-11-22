@@ -259,3 +259,32 @@ header {
     font-size: 28px;
   }
 }
+
+/* Page transition helper */
+body.page-exit {
+  opacity: 0.02;
+  transform: translateY(6px);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+/* Modal improvements - make overlays centered and smoother */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  z-index: 1500;
+}
+.modal .modal-dialog {
+  max-width: 540px;
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}

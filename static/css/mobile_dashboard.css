@@ -1,0 +1,475 @@
+
+html, body {
+    -webkit-font-smoothing: antialiased;
+}
+
+
+.container {
+    padding: 0 12px;
+}
+
+
+.dashboard-grid {
+    display: block;
+}
+
+.sidebar {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 14px;
+}
+
+.sidebar-menu a {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.main-content {
+    width: 100%;
+    padding: 14px;
+}
+
+.content-title { font-size: 18px; }
+
+.welcome-message, .ticket-detail, .stat-card, .review-container {
+    padding: 12px;
+}
+
+.tickets-list .ticket-item { padding: 12px; }
+
+.ticket-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+}
+
+.modal-content { max-width: 520px; width: 96%; padding: 16px; }
+
+
+@media (min-width: 992px) {
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 30px;
+    }
+
+    .sidebar { width: auto; margin-bottom: 0; }
+    .main-content { padding: 30px; }
+    .content-title { font-size: 24px; }
+}
+
+
+
+@media (max-width: 360px) {
+    .content-title { font-size: 16px; }
+    .btn-primary, .btn-danger { padding: 10px 16px; }
+}
+
+
+
+@media (max-width: 991px) {
+    
+    .dashboard {
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+
+    
+    .main-content {
+        padding: 10px !important;
+    }
+
+    
+    .sidebar {
+        padding: 8px !important;
+    }
+
+    
+    .content-title {
+        font-size: 20px !important;
+        line-height: 1.2 !important;
+    }
+
+    
+    .btn, .btn-primary, .btn-danger, .btn-outline {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+        text-align: center !important;
+    }
+
+    
+    .cta-box .btn, .form-actions .btn, form .btn-primary {
+        width: 100% !important;
+    }
+
+    
+    .stat-card, .review-container, .confirmation-card {
+        padding: 10px !important;
+        margin-bottom: 10px !important;
+    }
+
+    
+    .stats {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    
+    .ticket-detail, .tickets-list .ticket-item {
+        width: 100% !important;
+        padding: 10px !important;
+    }
+
+    
+    .search-box {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 6px 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .search-box .search-form {
+        width: 100% !important;
+        max-width: 760px !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+        position: relative !important;
+    }
+
+    
+    .main-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .search-box {
+        order: -1 !important; 
+        width: 100% !important;
+        z-index: 60 !important; 
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+        margin-bottom: 12px !important; 
+    }
+
+    .search-box .search-form { max-width: 100% !important; }
+
+    
+    .search-box .search-form .form-control,
+    .search-box .search-form input[type="text"],
+    .search-box .search-form input[type="search"] {
+        height: 52px !important;
+        padding: 14px 20px !important;
+        font-size: 16px !important;
+        border-radius: 28px !important;
+    }
+
+    
+    .search-box .search-form button,
+    .search-box .search-form .btn-search {
+        right: 12px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        height: 40px !important;
+        padding: 8px 12px !important;
+    }
+
+    
+    .content-header {
+        order: 0 !important;
+        z-index: 10 !important; 
+        margin-top: 2px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        padding-bottom: 20px !important; 
+    }
+
+    .content-header .header-actions { margin-top: 16px !important; }
+
+    .search-box .search-form .form-control,
+    .search-box .search-form input[type="text"],
+    .search-box .search-form input[type="search"] {
+        width: 100% !important;
+        padding: 12px 18px !important;
+        border-radius: 28px !important;
+        height: 44px !important;
+        box-sizing: border-box !important;
+    }
+
+    
+    .search-box {
+        margin-top: 8px !important; 
+    }
+
+    .search-box .search-form button,
+    .search-box .search-form .btn-search {
+        position: absolute !important;
+        right: 8px !important;
+        top: 50% !important; 
+        transform: translateY(-50%) !important;
+        height: 32px !important;
+        padding: 6px 10px !important;
+        border-radius: 18px !important;
+        z-index: 12 !important; 
+    }
+
+    
+    .content-header {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+    }
+
+    .content-header .header-actions {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        justify-content: flex-start !important; 
+        align-items: center !important;
+        width: 100% !important;
+    }
+
+    
+    .content-header .header-actions .btn {
+        display: inline-flex !important;
+        width: auto !important;
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+        border-radius: 20px !important;
+        box-sizing: border-box !important;
+    }
+
+    
+    .form-actions-row .actions-left .default-control {
+        display: inline-flex !important;
+        align-items: center !important;
+        transform: translateX(100px) !important; 
+    }
+
+    .form-actions-row .actions-left .default-control input[type="checkbox"] {
+        margin: 0 8px 0 0 !important; 
+        vertical-align: middle !important;
+    }
+
+    .form-actions-row .actions-left .default-control .default-control-text {
+        display: inline-block !important;
+        margin-left: 4px !important; 
+        
+        transform: translateX(-35px) !important;
+        white-space: nowrap !important; 
+        line-height: 1.2 !important;
+    }
+}
+
+
+
+.form-control, textarea.form-control {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.btn, .btn-primary, .btn-danger, .btn-outline {
+    display: inline-block;
+    width: auto;
+}
+
+
+.form-actions .btn-block, .cta-box .btn, form .btn-primary {
+    width: 100% !important;
+}
+
+
+.stat-card, .confirmation-card, .review-container, .ticket-detail {
+    width: 100% !important;
+    padding: 12px !important;
+    box-shadow: none !important;
+}
+
+
+.tickets-list {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+}
+
+.ticket-item { padding: 12px !important; }
+
+
+.ticket-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; }
+.ticket-tab { flex: 0 0 auto; }
+
+
+@media (max-width: 480px) {
+    .sidebar { padding: 10px !important; border-radius: 8px !important; }
+    .sidebar-menu a { padding: 10px 12px !important; font-size: 15px !important; }
+    .main-content { padding: 12px !important; }
+}
+
+
+.welcome-message { padding: 12px !important; }
+.cta-box .btn { width: auto; display: inline-block; }
+
+
+.stats { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+
+@media (max-width: 420px) {
+    .modal-content { width: 96% !important; padding: 12px !important; }
+}
+
+
+.form-control { padding: 10px 12px !important; font-size: 15px !important; }
+
+
+.ticket-detail .message-content, .ticket-detail .message { font-size: 14px !important; }
+
+
+.tickets-list, .ticket-detail, .review-container { overflow: visible !important; }
+
+
+.box-shadow, .card, .stat-card { box-shadow: 0 1px 6px rgba(0,0,0,0.06) !important; }
+
+
+
+.mobile-header-compact header {
+    height: 80px !important; 
+    min-height: 80px !important;
+    overflow: visible !important;
+}
+
+.mobile-header-compact .navbar {
+    padding: 8px 0 !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    position: relative !important; 
+}
+
+
+.mobile-header-compact .logo-container {
+    position: absolute !important;
+    left: 3px !important; 
+    top: 50% !important;
+    transform: translateY(-50%) translateY(-15px) !important; 
+    margin: 0 !important;
+    padding-left: 3px !important;
+    display: block !important;
+    width: auto !important;
+}
+
+.mobile-header-compact .logo {
+    margin: 0 !important;
+}
+
+.mobile-header-compact .logo img {
+    height: 40px !important; 
+}
+
+
+.mobile-header-compact .auth-buttons {
+    position: static !important;
+    transform: none !important;
+    right: auto !important;
+    margin-top: 6px !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+}
+
+
+.mobile-header-compact .auth-buttons .account-menu-container,
+.mobile-header-compact .auth-buttons .account-menu-trigger {
+    
+    position: static !important;
+    left: auto !important;
+}
+
+
+.mobile-header-compact .container {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+}
+
+
+body.mobile-header-compact .dashboard-header,
+body.mobile-header-compact .content-header,
+body.mobile-header-compact .donation-header {
+    min-height: 48px !important;
+    height: 48px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+}
+
+
+body.mobile-header-compact .account-menu-container,
+body.mobile-header-compact .account-menu-trigger {
+    position: absolute !important;
+    right: 35px !important; 
+    left: auto !important;
+    top: calc(50% + 38px) !important; 
+    transform: translateY(-50%) !important; 
+    z-index: 1001 !important;
+}
+
+body.mobile-header-compact .account-icon {
+    margin-left: 0 !important;
+}
+
+
+body.mobile-header-compact .content-header {
+    min-height: auto !important;
+    height: auto !important;
+    padding-bottom: 12px !important;
+}
+
+
+body.mobile-header-compact header,
+body.mobile-header-compact .dashboard-header,
+body.mobile-header-compact .content-header,
+body.mobile-header-compact .donation-header {
+    transition: height 180ms ease, padding 180ms ease;
+}
+
+body.mobile-header-compact .account-menu-container,
+body.mobile-header-compact .account-menu-trigger,
+body.mobile-header-compact .account-icon {
+    transition: top 180ms ease, left 180ms ease, transform 180ms ease;
+}
+
+
+.search-box .search-form button,
+.search-box .search-form .btn-search,
+.search-box .search-form .btn {
+    display: inline-flex !important;
+    width: auto !important;
+    position: absolute !important;
+    right: 10px !important;
+    top: calc(50% + 40px) !important;
+    transform: translateY(-50%) !important;
+    height: 36px !important;
+    padding: 6px 10px !important;
+    border-radius: 18px !important;
+    z-index: 3 !important;
+}
+
+.search-box .search-form .form-control,
+.search-box .search-form input[type="text"],
+.search-box .search-form input[type="search"] {
+    padding-right: 64px !important; 
+}
+
+.search-box .search-form .form-row {
+    position: relative !important;
+}
+
+
+

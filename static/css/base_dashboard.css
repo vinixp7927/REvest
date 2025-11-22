@@ -70,16 +70,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 25px 0;
-    position: relative;}
+    padding: 25px 0; /* header size copied from fazer doações (desktop) */
+    position: relative;
+}
 .logo-container {
     display: flex;
     align-items: center;
     gap: 15px;
     position: absolute;
-    left: -280px; /* AJUSTE ESTE VALOR PARA MOVER A LOGO HORIZONTALMENTE */
+    left: -280px; /* horizontal offset for REvest logo (desktop) */
     top: 50%;
-    transform: translateY(-50%);}
+    transform: translateY(-50%);
+}
 .logo {
     display: flex;
     align-items: center;
@@ -270,6 +272,6 @@
 .action-buttons .btn:hover {
     opacity: 0.9;
     transform: translateY(-1px);}
-.action-buttons .btn {
+action-buttons .btn {
         font-size: 10px;
         padding: 3px 6px;}

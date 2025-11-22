@@ -1,0 +1,113 @@
+/* mobile_conta_support.css
+   Mobile-only adjustments to make the 'Suporte' section header in `conta.html`
+   match the visual style of the 'Endereços' (edit_address) header.
+   Included only in `conta.html`. */
+
+@media (max-width: 420px) {
+  /* Scoped specifically to conta support page to avoid global overrides */
+  .main-content.conta-support h3 {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    margin: 6px 0 10px 0 !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid #eee !important;
+    line-height: 1.15 !important;
+  }
+
+  /* Ensure the form area below header has comfortable spacing and full-width inputs */
+  .main-content.conta-support form {
+    margin-top: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding-right: 6px !important;
+  }
+
+  .main-content.conta-support .form-group {
+    margin-bottom: 10px !important;
+  }
+
+  .main-content.conta-support input[type="text"],
+  .main-content.conta-support input[type="email"],
+  .main-content.conta-support input[type="password"],
+  .main-content.conta-support textarea,
+  .main-content.conta-support select {
+    width: 100% !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    padding: 10px 12px !important;
+    font-size: 15px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Ensure the submit button sits full-width on small screens like other flows */
+  .main-content.conta-support .btn-primary {
+    width: 100% !important;
+    display: block !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* If there is a profile-card above, reduce its bottom margin to match addresses layout */
+  .main-content.conta-support .profile-card { margin-bottom: 10px !important; }
+}
+
+/* Page-specific header / logo / account icon sizing for conta support page */
+@media (max-width: 420px) {
+  body.conta-page header .navbar {
+    padding: 6px 0 !important;
+    align-items: center !important;
+    min-height: 64px !important;
+    height: 64px !important;
+  }
+
+  body.conta-page header .logo-container {
+    position: static !important;
+    transform: none !important;
+    margin: 4px 0 0 8px !important;
+  }
+
+  body.conta-page header .logo img {
+    height: 34px !important;
+    width: auto !important;
+  }
+
+  /* account icon size (overrides inline font-size) */
+  body.conta-page .account-icon i {
+    font-size: 18px !important;
+  }
+
+  /* make sure account menu appears just below the smaller header */
+  body.conta-page header .account-menu,
+  body.conta-page header .account-menu[style*="display: block"] {
+    top: 70px !important; /* header height + small gap */
+    right: 12px !important;
+    left: auto !important;
+    position: fixed !important;
+    z-index: 99999 !important;
+    max-width: 86vw !important;
+  }
+
+  /* Match panel lateral mobile positions: logo left, account controls right */
+  body.conta-page header .logo-container {
+    position: absolute !important;
+    left: 3px !important;
+    top: 50% !important;
+    transform: translateY(-50%) translateY(-15px) !important;
+    margin: 0 !important;
+  }
+
+  body.conta-page .account-menu-container,
+  body.conta-page .account-menu-trigger {
+    position: absolute !important;
+    right: 35px !important;
+    left: auto !important;
+    top: calc(50% + 38px) !important;
+    transform: translateY(-50%) !important;
+    z-index: 1001 !important;
+  }
+
+  /* Prevent horizontal overflow introduced by mis-sized elements */
+  body.conta-page .container, body.conta-page .main-content {
+    overflow-x: hidden !important;
+  }
+}
