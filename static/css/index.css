@@ -31,6 +31,33 @@ header {
   z-index: 999;
 }
 
+/* Desktop: keep header in its original position (no visual transforms) */
+/* Mobile-first rules below remain unchanged; this media query ensures
+   desktop (min-width:481px) shows the original layout. */
+@media (min-width: 481px) {
+  header {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Desktop: center the nav links visually as in the original layout
+   without affecting mobile. This keeps logo left and auth buttons right. */
+@media (min-width: 481px) {
+  header .navbar {
+    position: relative;
+  }
+  header .nav-links {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) !important;
+    top: 50%;
+    transform-origin: center;
+    display: flex;
+    gap: 35px;
+  }
+}
+
 .container {
   width: 100%;
   max-width: 1200px;
@@ -81,6 +108,20 @@ header {
   color: white;
 }
 
+/* Move login button slightly up for visual alignment */
+/* Desktop reset for header children (keep desktop unchanged) */
+@media (min-width: 481px) {
+  header .auth-buttons #loginBtn,
+  header .nav-links a,
+  header .logo img {
+
+  /* Mobile-only: move header texts 25px down (only affects mobile) */
+  header .nav-links {
+    transform: translateY(25px) !important;
+  }
+    transform: none !important;
+  }
+}
 /* ========== HERO ========== */
 .hero {
   display: flex;
@@ -251,14 +292,94 @@ header {
     font-size: 32px;
   }
 
-  .hero-left p {
-    font-size: 15px;
+  header .auth-buttons #loginBtn {
+    transform: translateY(60px) !important;
   }
+ 
 
   .section-title {
     font-size: 28px;
   }
 }
+
+/* Mobile-only adjustments (reset to default behavior) */
+@media (max-width: 480px) {
+  /* Keep header attached to top as on desktop */
+  /* Mobile: keep header visible but shifted up as requested (mobile-only) */
+  header {
+    top: 0 !important;
+    /* remembered stable point: do NOT move the header itself on mobile */
+    transform: none !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  /* Restore container padding so header keeps its normal height */
+  header .container {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+  /* Ensure auth buttons remain in normal flow and visible */
+  .auth-buttons {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .auth-buttons .btn {
+    transform: none !important;
+    margin-top: 0 !important;
+    z-index: 1100 !important;
+  }
+
+  /* Mobile-only: keep logo position and move nav texts 25px down (stable state)
+     — this is the remembered point before the last problematic edits. */
+  /* Mobile adjustments requested now: move text and login up 50px, logo up 70px */
+  /* Current baseline: logo 80px down, nav texts 25px down; apply negative
+     offsets to move them up by the requested amounts. */
+  header .logo img {
+    transform: translateY(10px) !important; /* kept as-is */
+  }
+  /* Ensure header texts stay down (do not move up). Keep them at 25px down. */
+  /* Move header texts 40px up on mobile-only (negative Y moves up) */
+  header .nav-links {
+    transform: translateY(-40px) !important;
+  }
+  header .nav-links a {
+    transform: translateY(-40px) !important;
+  }
+  /* Move login button down 50px on mobile only (positive Y = down) */
+  /* Move login button 25px up on mobile-only */
+  header .auth-buttons #loginBtn,
+  header .auth-buttons .btn {
+    transform: translateY(-25px) !important;
+  }
+  /* Keep hero spacing as original */
+  .hero {
+    padding-top: 120px !important;
+  }
+
+  /* --- Desktop centering rules applied only for mobile-first view ---
+     Copy the desktop nav-centering layout but scope it to mobile so
+     we don't touch or alter desktop rules (min-width:481px remains intact). */
+  header .navbar {
+    position: relative;
+  }
+  header .nav-links {
+    position: absolute;
+    left: 50%;
+    /* keep horizontal centering and move texts 40px up */
+    transform: translateX(-50%) translateY(-40px) !important;
+    top: 50%;
+    transform-origin: center;
+    display: flex;
+    gap: 20px;
+  }
+  /* Keep auth buttons on the right in mobile too */
+  header .auth-buttons {
+    position: relative;
+    z-index: 1200;
+  }
+}
+
+/* No additional mobile overrides necessary beyond the reset above */
 
 /* Page transition helper */
 body.page-exit {

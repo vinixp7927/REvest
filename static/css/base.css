@@ -6,6 +6,15 @@
     z-index: 999;
     display: inline-block;
 }
+
+/* ===== DESKTOP-ONLY HEADER TEXTS ADJUSTMENT ===== */
+@media (min-width: 769px) {
+    /* Move the three header nav link texts (Início, Como Doar, Contato) 5px up on desktop only */
+    .nav-links a {
+        position: relative;
+        top: -7px;
+    }
+}
 .account-menu-trigger {
     display: flex;
     align-items: center;
@@ -1799,6 +1808,39 @@ textarea.form-control {
     }
     .info-modal .modal-title {
         font-size: 18px;
+    }
+}
+
+/* ===== MOBILE-ONLY HEADER ADJUSTMENTS (APENAS MOBILE FIRST) ===== */
+@media (max-width: 768px) {
+    /* Cortar visualmente um pedaço do final do header sem alterar o layout desktop */
+    header {
+        -webkit-clip-path: inset(0 0 15px 0);
+        clip-path: inset(0 0 15px 0);
+    }
+
+    /* Descer o botão de login 15px visualmente no mobile apenas */
+    #loginBtn, .auth-buttons {
+        position: relative;
+        top: 15px;
+    }
+
+    /* Garantir que o menu/account não seja escondido atrás do corte */
+    .account-menu-container, .account-menu {
+        z-index: 1200;
+    }
+
+    /* Mover apenas a logo REvest 20px para cima no mobile */
+    .logo-container .logo img {
+        position: relative;
+        top: -20px;
+    }
+
+    /* Subir a imagem de fundo do .hero 15px somente no mobile */
+    .hero {
+        /* reduz a posição vertical da imagem para subir visualmente 15px */
+        background-position: center calc(50% - 15px);
+        background-size: cover;
     }
 }
 

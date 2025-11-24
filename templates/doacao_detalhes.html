@@ -22,17 +22,17 @@
         <form class="doacao-detalhes-form" action="{{ url_for('doacao_detalhes') }}" method="POST">
             <input type="hidden" name="details_token" value="{{ details_token }}">
 
-            <!-- Roupas -->
-            {% if ranges.get('roupas') %}
+            <!-- Camisetas -->
+            {% if ranges.get('camisetas') %}
             <div>
-                <div class="item-group-title"><i class="fas fa-tshirt"></i> Roupas</div>
-                {% for i in ranges['roupas'] %}
+                <div class="item-group-title"><i class="fas fa-tshirt"></i> Camisetas</div>
+                {% for i in ranges['camisetas'] %}
                 <div class="item-group">
                     <div class="item-group-title" style="margin-bottom: 12px; margin-top: 0; border: none; font-size: 14px;">Item #{{ i+1 }}</div>
                     <div class="item-fields">
                         <div class="form-field">
-                            <label for="roupas_size_{{ i }}">Tamanho</label>
-                            <select name="roupas_size_{{ i }}" id="roupas_size_{{ i }}">
+                            <label for="camisetas_size_{{ i }}">Tamanho</label>
+                            <select name="camisetas_size_{{ i }}" id="camisetas_size_{{ i }}">
                                 <option value="">Selecione</option>
                                 <option>PP</option>
                                 <option>P</option>
@@ -42,8 +42,8 @@
                             </select>
                         </div>
                         <div class="form-field">
-                            <label for="roupas_target_{{ i }}">Categoria</label>
-                            <select name="roupas_target_{{ i }}" id="roupas_target_{{ i }}">
+                            <label for="camisetas_target_{{ i }}">Categoria</label>
+                            <select name="camisetas_target_{{ i }}" id="camisetas_target_{{ i }}">
                                 <option value="">Selecione</option>
                                 <option>Masculino</option>
                                 <option>Feminino</option>
@@ -53,8 +53,8 @@
                         </div>
                     </div>
                     <div class="form-field" style="margin-top: 10px;">
-                        <label for="roupas_desc_{{ i }}">Descrição (opcional)</label>
-                        <input type="text" name="roupas_desc_{{ i }}" id="roupas_desc_{{ i }}" placeholder="Ex: Azul, com bolsos..." style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                        <label for="camisetas_desc_{{ i }}">Descrição (opcional)</label>
+                        <input type="text" name="camisetas_desc_{{ i }}" id="camisetas_desc_{{ i }}" placeholder="Ex: Azul, com bolsos..." style="padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
                     </div>
                 </div>
                 {% endfor %}
@@ -295,5 +295,89 @@
             alert('⚠️ Por favor, preencha pelo menos 1 item com tamanho E categoria!');
         }
     });
+
+</script>
+
+<script>
+    // Trocar opções de Tamanho quando Categoria for 'Infantil' ou 'Bebê'
+    (function() {
+        // Bebê - roupas: PP, P, M, G, GG
+        const babyClothingSizes = ['PP','P','M','G','GG'];
+        // Infantil - roupas: 1 a 14 + opção 'demais numeros' (aparece como se fosse um número)
+        const infantClothingSizes = Array.from({length:14}, (_,i) => String(i+1)).concat(['demais numeros']);
+        // Calçados infantis/bebê: 13 a 36 + opção 'demais numeros' (usar mesmo rótulo que roupas)
+        const infantShoeSizes = Array.from({length:36 - 13 + 1}, (_,i) => String(13 + i)).concat(['demais numeros']);
+
+        function makeOptionsHtml(arr) {
+            let html = '<option value="">Selecione</option>';
+            arr.forEach(v => {
+                html += '<option>'+v+'</option>';
+            });
+            return html;
+        }
+
+        // Guarda as opções originais para cada tamanho
+        function ensureOriginalOptions(sizeSelect) {
+            if (!sizeSelect) return;
+            if (!sizeSelect.dataset.origOptions) {
+                sizeSelect.dataset.origOptions = sizeSelect.innerHTML;
+            }
+        }
+
+        function setOptionsForSizeSelect(sizeSelect, optionsHtml) {
+            if (!sizeSelect) return;
+            sizeSelect.innerHTML = optionsHtml;
+        }
+
+        function handleCategoryChange(ev) {
+            const targetSelect = ev.currentTarget;
+            const itemGroup = targetSelect.closest('.item-group');
+            if (!itemGroup) return;
+            const sizeSelect = itemGroup.querySelector('select[id*="_size_"]');
+            if (!sizeSelect) return;
+            ensureOriginalOptions(sizeSelect);
+
+            const val = (targetSelect.value || '').trim().toLowerCase();
+            if (val === 'bebê' || val === 'bebe') {
+                // Bebê selecionado -> roupas com PP/P/M/G/GG, calçados mantêm a lista infantil
+                const isShoe = (/t[eé]nis/i).test(sizeSelect.id) || (/t[eé]nis/i).test(sizeSelect.name);
+                if (isShoe) {
+                    setOptionsForSizeSelect(sizeSelect, makeOptionsHtml(infantShoeSizes));
+                } else {
+                    setOptionsForSizeSelect(sizeSelect, makeOptionsHtml(babyClothingSizes));
+                }
+            } else if (val === 'infantil') {
+                // Infantil selecionado -> nomes numéricos 1..14 + 'demais numeros' para roupas
+                const isShoe = (/t[eé]nis/i).test(sizeSelect.id) || (/t[eé]nis/i).test(sizeSelect.name);
+                if (isShoe) {
+                    setOptionsForSizeSelect(sizeSelect, makeOptionsHtml(infantShoeSizes));
+                } else {
+                    setOptionsForSizeSelect(sizeSelect, makeOptionsHtml(infantClothingSizes));
+                }
+            } else {
+                // restaurar opções originais
+                if (sizeSelect.dataset.origOptions) {
+                    sizeSelect.innerHTML = sizeSelect.dataset.origOptions;
+                }
+            }
+        }
+
+        // Anexa listeners a todos os selects de categoria
+        const categorySelects = document.querySelectorAll('select[id*="_target_"]');
+        categorySelects.forEach(sel => {
+            // salva originais dos size selects relacionados
+            const ig = sel.closest('.item-group');
+            if (ig) {
+                const s = ig.querySelector('select[id*="_size_"]');
+                if (s) ensureOriginalOptions(s);
+            }
+            sel.addEventListener('change', handleCategoryChange);
+            // dispara para o estado inicial caso já esteja selecionado
+            if (sel.value && sel.value.trim()) {
+                sel.dispatchEvent(new Event('change'));
+            }
+        });
+    })();
+</script>
 </script>
 {% endblock %}

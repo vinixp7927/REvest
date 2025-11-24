@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import secrets
 from flask import Flask, render_template, redirect, url_for, session, request, jsonify, flash
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -63,10 +63,18 @@ def login():
                 # Verificar se usuário está banido
                 if user.is_banned:
                     return render_template('index.html', login_error="Esta conta está banida", active_tab='login')
+                # 'Lembrar-me' controla se a sessão será permanente -> set antes de popular sessão
+                try:
+                    remember = request.form.get('remember') == 'on'
+                    session.permanent = bool(remember)
+                except Exception:
+                    session.permanent = False
+                # Popular sessão
                 session['user'] = user.Email
                 session['name'] = user.Nome
                 session['role'] = user.role
                 session['user_id'] = user.ID_Doador
+                print(f"Login: user={user.Email}, session.permanent={session.permanent}")
                 return redirect(url_for('dashboard'))
 
         # Se não autenticou como Doador, tentar Administrador
@@ -78,10 +86,16 @@ def login():
                 valid_admin = (admin.Senha == password)
 
             if valid_admin:
+                try:
+                    remember = request.form.get('remember') == 'on'
+                    session.permanent = bool(remember)
+                except Exception:
+                    session.permanent = False
                 session['user'] = admin.Email
                 session['name'] = admin.Nome
                 session['role'] = 'admin'
                 session['user_id'] = admin.ID_Admin
+                print(f"Login(admin): user={admin.Email}, session.permanent={session.permanent}")
                 return redirect(url_for('admin'))
         return render_template('index.html', login_error="Credenciais inválidas", active_tab='login')
     except Exception as e:
@@ -223,9 +237,9 @@ def doacao():
         except Exception:
             addresses = []
 
-        # calcular min_date (2 dias a partir de hoje) compatível com input type=date
+        # calcular min_date (4 dias a partir de hoje) compatível com input type=date
         from datetime import datetime, timedelta
-        min_date_obj = datetime.utcnow().date() + timedelta(days=2)
+        min_date_obj = datetime.utcnow().date() + timedelta(days=4)
         min_date = min_date_obj.strftime('%Y-%m-%d')
 
         return render_template('doacao.html', form_token=session['form_token'], addresses=addresses, min_date=min_date)
@@ -243,7 +257,7 @@ def doacao():
             return 0
 
     quant = {
-        'roupas': q('roupas'),
+        'camisetas': q('camisetas'),
         'calças': q('calças'),
         'blusas': q('blusas'),
         'roupas_intimas': q('roupas_intimas'),
@@ -254,6 +268,21 @@ def doacao():
     if total < 3:
         flash('Adicione pelo menos 3 itens no total.', 'info')
         return redirect(url_for('doacao'))
+
+    # Verificar se o usuário tem endereços cadastrados ao solicitar a coleta
+    try:
+        user_id = session.get('user_id')
+        user_addresses = Endereco.query.filter_by(ID_Doador=user_id).all() if user_id else []
+        if not user_addresses or len(user_addresses) == 0:
+            flash('Você precisa cadastrar um endereço primeiro antes de solicitar a coleta', 'warning')
+            return redirect(url_for('conta_endereco_get'))
+        # Se o formulário não informou um endereço selecionado, também redirecionar
+        selected_address = request.form.get('address')
+        if not selected_address:
+            flash('Você precisa selecionar um endereço antes de solicitar a coleta', 'warning')
+            return redirect(url_for('conta_endereco_get'))
+    except Exception:
+        pass
 
     session['pending_donation'] = {
         'quant': quant,
@@ -290,6 +319,22 @@ def confirmacao():
 
         endereco_id = int(form['address'])
         data_coleta = form['date']
+        # Validar data de coleta: não aceitar datas antes do prazo mínimo (4 dias) nem muito distantes (limite: 1 ano à frente)
+        try:
+            dt = datetime.strptime(data_coleta, '%Y-%m-%d').date()
+            today = datetime.utcnow().date()
+            min_allowed = today + timedelta(days=4)
+            # não permitir datas antes do prazo mínimo
+            if dt < min_allowed:
+                flash(f'Data de coleta inválida. A data mínima permitida é {min_allowed.strftime("%Y-%m-%d")}.', 'warning')
+                return redirect(url_for('doacao'))
+            # limitar à 1 ano à frente para evitar anos absurdos (ex: 2135)
+            if dt > today.replace(year=today.year + 1):
+                flash('Data de coleta inválida. Escolha uma data dentro de um ano a partir de hoje.', 'warning')
+                return redirect(url_for('doacao'))
+        except Exception:
+            flash('Data de coleta inválida. Use o formato YYYY-MM-DD.', 'warning')
+            return redirect(url_for('doacao'))
         address = Endereco.query.get(endereco_id)
         if not address or address.ID_Doador != user_id:
             return redirect(url_for('doacao'))
@@ -546,8 +591,10 @@ def limpar_historico():
     try:
         user_id = session['user_id']
         
-        # Deletar todas as doações do usuário
-        Doacao.query.filter_by(ID_Doador=user_id).delete(synchronize_session=False)
+        # Deletar todas as doações do usuário (usar ORM para respeitar cascade em Doacao.itens)
+        doacoes_to_delete = Doacao.query.filter_by(ID_Doador=user_id).all()
+        for d in doacoes_to_delete:
+            db.session.delete(d)
         db.session.commit()
         
         print(f"Histórico de doações limpo para usuário {user_id}")
@@ -1237,8 +1284,10 @@ def responder_exclusao(solicitacao_id, acao):
         if acao == 'aprovar':
             solicitacao.Status = 'aprovada'
             
-            # Deletar histórico do usuário
-            Doacao.query.filter_by(ID_Doador=solicitacao.ID_Doador).delete(synchronize_session=False)
+            # Deletar histórico do usuário usando ORM para manter consistência (remove itens relacionados)
+            doacoes_remove = Doacao.query.filter_by(ID_Doador=solicitacao.ID_Doador).all()
+            for dd in doacoes_remove:
+                db.session.delete(dd)
             
         else:  # rejeitar
             motivo = request.form.get('motivo', 'Solicitação rejeitada pelo administrador')
@@ -1505,7 +1554,10 @@ def deletar_conta():
         return redirect(url_for('conta_deletar_get'))
     # O modelo Doacao não possui campos `admin_id` nem `coletor_id`.
     # Deletar apenas doações cujo ID_Doador corresponde ao usuário.
-    Doacao.query.filter(Doacao.ID_Doador == user_id).delete(synchronize_session=False)
+    # Deletar doações via ORM para garantir que DoacaoItem seja removido pelo cascade
+    _doacoes = Doacao.query.filter(Doacao.ID_Doador == user_id).all()
+    for _d in _doacoes:
+        db.session.delete(_d)
     Ticket.query.filter_by(ID_Doador=user_id).delete()
     Endereco.query.filter_by(ID_Doador=user_id).delete()
     # Remover também solicitações de exclusão pendentes/registradas para este usuário
@@ -1571,8 +1623,11 @@ app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SECURE=False,    # True em produção (HTTPS)
     SESSION_COOKIE_SAMESITE='Lax',
-    PERMANENT_SESSION_LIFETIME=3600
+    PERMANENT_SESSION_LIFETIME=timedelta(days=7)
 )
+
+# Ensure app.permanent_session_lifetime is consistent with config
+app.permanent_session_lifetime = app.config['PERMANENT_SESSION_LIFETIME']
 
 @app.after_request
 def add_security_headers(response):
@@ -1599,3 +1654,4 @@ def safe_logout():
         return redirect(url_for('login'))
     except Exception:
         return redirect('/')
+

@@ -44,12 +44,12 @@
           <div class="donation-grid">
             <div class="donation-item">
               <i class="fas fa-tshirt"></i>
-              <h3>Roupas</h3>
-              <p>Camisetas, camisas, vestidos</p>
+              <h3>Camisetas</h3>
+              <p>Camisas, vestidos</p>
               <div class="donation-quantity">
-                <button type="button" class="quantity-btn" data-item="roupas">-</button>
-                <input type="text" class="quantity-input" name="roupas" value="0" readonly>
-                <button type="button" class="quantity-btn" data-item="roupas">+</button>
+                <button type="button" class="quantity-btn" data-item="camisetas">-</button>
+                <input type="text" class="quantity-input" name="camisetas" value="0" readonly>
+                <button type="button" class="quantity-btn" data-item="camisetas">+</button>
               </div>
             </div>
 
@@ -136,9 +136,7 @@
             <input type="date" class="form-control" id="date" name="date" required min="{{ min_date }}">
           </div>
 
-          <button type="submit" class="btn btn-primary btn-block" {% if not addresses %}disabled{% endif %}>
-            {% if addresses %}Solicitar Coleta{% else %}Cadastre um endereço primeiro{% endif %}
-          </button>
+          <button type="submit" class="btn btn-primary btn-block">Solicitar Coleta</button>
         </form>
       </div>
     </div>
@@ -146,3 +144,19 @@
 </section>
 {% endblock %}
 <!-- Inline submission handling removed; centralized in static/js/script.js -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var dateInput = document.getElementById('date');
+    if (!dateInput) return;
+    // Try to open native date picker on focus/click when supported
+    dateInput.addEventListener('focus', function() {
+      try { if (this.showPicker) this.showPicker(); } catch (e) {}
+    });
+    dateInput.addEventListener('click', function() {
+      try { if (this.showPicker) this.showPicker(); } catch (e) {}
+    });
+  } catch (e) {}
+});
+</script>
